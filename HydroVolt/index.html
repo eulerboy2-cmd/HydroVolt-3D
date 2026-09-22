@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HydroVolt 3D - Circuit Simulator</title>
+    
+    <script>
+        if (navigator.userAgent.match(/kakaotalk/i)) {
+            location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background-color: #0b1121; font-family: 'Inter', sans-serif; user-select: none; touch-action: manipulation; }
+        
+        #app-container { display: flex; flex-direction: column-reverse; width: 100%; height: 100%; }
+        
+        #editor-panel { flex: 0 0 55%; background: #111827; border-top: 1px solid #1f2937; display: flex; flex-direction: column; z-index: 10; padding: 1rem; overflow-y: auto; box-shadow: 0 -5px 20px rgba(0,0,0,0.6); }
+        #tut-target-canvas { flex: 1; position: relative; background: radial-gradient(circle at center, #1e293b 0%, #0b1121 100%); z-index: 1; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        @media (min-width: 768px) {
+            #app-container { flex-direction: row; }
+            #editor-panel { flex: 0 0 440px; height: 100%; border-top: none; border-right: 1px solid #1f2937; padding: 1.5rem; box-shadow: 5px 0 20px rgba(0,0,0,0.6); z-index: 10; }
+        }
+
+        #editor-panel::-webkit-scrollbar { width: 6px; }
+        #editor-panel::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+
+        input[type=range] { -webkit-appearance: none; background: transparent; width: 100%; margin-top: 4px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #fff; cursor: pointer; margin-top: -6px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #374151; border-radius: 2px; }
+        
+        input[type=number] { background: #1f2937; border: 1px solid #374151; color: #38bdf8; border-radius: 4px; padding: 2px 4px; font-size: 11px; font-weight: bold; width: 50px; text-align: center; outline: none; transition: border 0.2s; }
+        input[type=number]:focus { border-color: #0ea5e9; box-shadow: 0 0 0 1px #0ea5e9; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        input[type=text], select { outline: none; transition: border 0.2s; }
+        input[type=text]:focus, select:focus { border-color: #0ea5e9; }
+
+        .grid-row { display: flex; gap: 4px; margin-bottom: 4px; }
+        .grid-cell { flex: 1; aspect-ratio: 1; border: 2px solid #374151; border-radius: 6px; cursor: pointer; transition: all 0.1s; position: relative; background: #1f2937; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); touch-action: manipulation; }
+        .grid-cell:hover { border-color: #38bdf8; transform: translateY(-2px); z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
+        .selected-cell { border-color: #facc15 !important; box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.5), inset 0 2px 4px rgba(0,0,0,0.4) !important; z-index: 5; }
+        
+        .tool-btn { border: 2px solid transparent; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.5rem; border-radius: 0.75rem; background: #1f2937; cursor: pointer; height: 70px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .tool-btn.active { border-color: #0ea5e9; background: #0f172a; box-shadow: inset 0 0 15px rgba(14, 165, 233, 0.3); }
+
+        .port-line { position: absolute; background: #0ea5e9; z-index: 1; }
+        .port-T { top: 0; left: 40%; width: 20%; height: 50%; }
+        .port-B { bottom: 0; left: 40%; width: 20%; height: 50%; }
+        .port-L { left: 0; top: 40%; width: 50%; height: 20%; }
+        .port-R { right: 0; top: 40%; width: 50%; height: 20%; }
+        .port-C { top: 40%; left: 40%; width: 20%; height: 20%; background: #0ea5e9; position: absolute; }
+        
+        .c-res { position:absolute; top:15%; left:15%; width:70%; height:70%; background:#ea580c; border-radius:4px; z-index:2; box-shadow: 0 2px 4px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; color:white; font-size:10px; font-weight:bold;}
+        .c-bulb { position:absolute; top:15%; left:15%; width:70%; height:70%; background:#eab308; border-radius:50%; z-index:2; box-shadow: 0 0 10px #eab308; display:flex; align-items:center; justify-content:center; color:black; font-size:10px; font-weight:bold;}
+        .c-batt { position:absolute; top:20%; left:5%; width:90%; height:60%; background:#334155; border-radius:4px; z-index:3; display:flex; align-items:center; justify-content:space-between; padding: 0 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.8);}
+
+        .v-label { position: absolute; top: 2px; left: 3px; font-size: 9px; font-weight: 800; color: #fff; z-index: 5; text-shadow: 1px 1px 2px rgba(0,0,0,0.9); }
+        .i-label { position: absolute; bottom: 2px; right: 3px; font-size: 9px; font-weight: 800; color: #4ade80; z-index: 5; text-shadow: 1px 1px 2px rgba(0,0,0,0.9); }
+
+        .tut-highlight { 
+            position: relative; 
+            z-index: 100000 !important; 
+            box-shadow: 0 0 0 4px #0ea5e9, 0 0 30px rgba(14, 165, 233, 0.6) !important; 
+            border-radius: 0.5rem; 
+            background: rgba(15, 23, 42, 0.95) !important; 
+            pointer-events: none;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="tut-highlighter" class="hidden fixed border-[3px] border-sky-400 rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.7),_0_0_15px_rgba(14,165,233,0.5)_inset] pointer-events-none z-[99998] transition-all duration-300 ease-in-out"></div>
+
+    <div id="tutorial-overlay" class="hidden fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center">
+        <div id="tutorial-box" class="bg-slate-800 border border-sky-400 p-6 rounded-2xl shadow-2xl max-w-sm w-[90%] text-center pointer-events-auto relative mt-20 md:mt-0">
+            <p id="tutorial-text" class="text-sm text-slate-200 mb-6 leading-relaxed whitespace-pre-line"></p>
+            <div class="flex justify-between items-center mt-2">
+                <button id="tut-skip" class="text-xs text-slate-400 hover:text-white transition-colors p-2">건너뛰기</button>
+                <button id="tut-next" class="text-xs bg-sky-500 hover:bg-sky-400 text-white px-5 py-2 rounded-lg font-bold shadow-lg transition-colors">다음 👉</button>
+            </div>
+            <div class="absolute -top-3 -right-3 text-[10px] bg-sky-500 text-white font-bold px-2 py-1 rounded-full shadow" id="tut-step-badge">1/5</div>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <div id="editor-panel">
+            <div class="flex justify-between items-start mb-1">
+                <h1 class="text-2xl font-bold text-cyan-400">HydroVolt 3D</h1>
+                <div class="flex gap-2">
+                    <button id="btn-tutorial" class="text-[10px] bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 rounded transition-colors border border-sky-500 font-bold shadow">❓ Help</button>
+                    <button id="lang-toggle" class="text-[10px] bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded transition-colors border border-slate-600 font-bold shadow">🇺🇸 EN</button>
+                </div>
+            </div>
+            <p id="ui-subtitle" class="text-[11px] text-slate-400 mb-5"><b>클릭/터치:</b> 배치/회전 &nbsp; <b>우클릭/선택툴:</b> 속성 검사</p>
+            
+            <div id="tut-target-inspector" class="space-y-4 mb-4 bg-slate-800/60 p-5 rounded-xl border border-slate-700">
+                <div>
+                    <h3 id="ui-inspector-title" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-600 pb-1">인스펙터 (Inspector)</h3>
+                    <div id="inspector-content" class="min-h-[55px] flex flex-col justify-center">
+                        <span id="ui-select-tip" class="text-slate-500 text-[10px] text-center w-full block">부품을 우클릭하여 선택하세요.</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4 pt-3 border-t border-slate-600">
+                    <div class="flex-1">
+                        <label class="flex justify-between items-center text-[10px] font-semibold text-slate-400 mb-1">
+                            <span id="ui-width">가로 크기 (W)</span>
+                            <input type="number" id="input-cols" min="3" max="10" step="1" value="5">
+                        </label>
+                        <input type="range" id="slider-cols" min="3" max="10" step="1" value="5">
+                    </div>
+                    <div class="flex-1">
+                        <label class="flex justify-between items-center text-[10px] font-semibold text-slate-400 mb-1">
+                            <span id="ui-height">세로 크기 (H)</span>
+                            <input type="number" id="input-rows" min="3" max="10" step="1" value="3">
+                        </label>
+                        <input type="range" id="slider-rows" min="3" max="10" step="1" value="3">
+                    </div>
+                </div>
+
+                <div class="flex justify-between text-sm font-bold text-slate-300 pt-3 border-t border-slate-600">
+                    <span id="ui-totalI">전체 회로 전류량 (I)</span>
+                    <span id="out-itotal" class="text-green-400 font-mono">0.00 A</span>
+                </div>
+            </div>
+
+            <h2 id="ui-tools-title" class="text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-widest">도구 및 부품 (Tools)</h2>
+            <div id="tut-target-tools" class="grid grid-cols-4 gap-2 mb-4 p-2 rounded-xl">
+                <div class="tool-btn" data-tool="-1">
+                    <svg class="w-6 h-6 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                    <span id="t-select" class="text-[10px] font-bold text-slate-300">선택</span>
+                </div>
+                <div class="tool-btn active" data-tool="1"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-wire" class="text-[10px] font-bold text-slate-300 mt-1">일자 전선</span></div>
+                <div class="tool-btn" data-tool="2"><div class="w-6 h-6 relative"><div class="port-B"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-corner" class="text-[10px] font-bold text-slate-300 mt-1">코너 전선</span></div>
+                <div class="tool-btn" data-tool="3"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-B"></div><div class="port-C"></div></div><span id="t-tjunc" class="text-[10px] font-bold text-slate-300 mt-1">T자 전선</span></div>
+                <div class="tool-btn" data-tool="4"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-res border border-orange-300">R</div></div><span id="t-res" class="text-[10px] font-bold text-slate-300 mt-1">저항</span></div>
+                <div class="tool-btn" data-tool="5"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-bulb"></div></div><span id="t-bulb" class="text-[10px] font-bold text-slate-300 mt-1">전구</span></div>
+                
+                <div class="tool-btn" data-tool="0"><div class="w-6 h-6 rounded border border-slate-600 border-dashed"></div><span id="t-erase" class="text-[10px] font-bold text-slate-300 mt-1">지우개</span></div>
+                <div class="tool-btn" data-tool="6" style="grid-column: span 1;">
+                    <div class="w-full h-5 relative flex items-center justify-center">
+                        <div class="port-L"></div><div class="port-R"></div>
+                        <div class="w-10 h-5 bg-slate-800 border border-slate-600 rounded flex items-center justify-between px-[2px] z-10"><span class="text-white text-[8px] bg-black px-[2px] rounded">-</span><span class="text-white text-[8px] bg-red-500 px-[2px] rounded">+</span></div>
+                    </div>
+                    <span id="t-batt" class="text-[10px] font-bold text-slate-300 mt-1">배터리</span>
+                </div>
+            </div>
+
+            <h2 id="blueprint-title" class="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">회로도 (5x3)</h2>
+            <div id="tut-target-grid" class="bg-slate-900 p-2 rounded-xl border border-slate-700 shadow-inner mb-4">
+                <div id="grid-container"></div>
+            </div>
+            
+            <div id="tut-target-share" class="mb-6 bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                <h3 id="ui-share-title" class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 border-b border-slate-600 pb-1">회로 공유 & 불러오기</h3>
+                <div class="flex gap-2 mb-2">
+                    <input type="text" id="export-code" readonly class="flex-1 bg-[#0b1121] border border-slate-600 text-[10px] font-mono text-slate-300 p-1.5 rounded cursor-copy">
+                    <button id="btn-copy" class="bg-slate-600 hover:bg-slate-500 text-white text-[10px] font-bold px-3 py-1.5 rounded transition-colors w-[50px] shrink-0">복사</button>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="import-code" class="flex-1 bg-[#0b1121] border border-slate-600 text-[10px] font-mono text-slate-300 p-1.5 rounded">
+                    <button id="btn-load" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold px-3 py-1.5 rounded transition-colors w-[50px] shrink-0">적용</button>
+                </div>
+                
+                <div class="mt-3 pt-3 border-t border-slate-600">
+                    <label class="flex justify-between items-center text-[10px] font-semibold text-slate-400 mb-1">
+                        <span id="ui-example-title">예제 회로 불러오기</span>
+                    </label>
+                    <select id="example-select" class="w-full bg-[#0b1121] border border-slate-600 text-[10px] text-emerald-400 font-bold p-1.5 rounded outline-none focus:border-emerald-500 transition-colors cursor-pointer">
+                    </select>
+                </div>
+            </div>
+
+            <div id="status-box" class="text-[11px] p-3 rounded font-mono mt-2 mb-10"></div>
+        </div>
+
+        <div id="tut-target-canvas" class="transition-all w-full h-[45%] md:h-full flex-grow relative z-1">
+            <div id="canvas-container" class="absolute inset-0"></div>
+            <div id="tooltip" style="display:none; position:absolute; background:rgba(15,23,42,0.95); border:1px solid #0ea5e9; padding:8px 12px; border-radius:6px; pointer-events:none; z-index:9999; color:white; font-family:monospace; font-size:11px; box-shadow:0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(4px);"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+        import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+        // ==========================================
+        // 0. 다국어 (i18n) & 예제 회로 (1, 2, 5, 3, 4, 6 순서 및 이름 반영)
+        // ==========================================
+        const i18n = {
+            ko: {
+                subtitle: "<b>클릭/터치:</b> 배치/회전 &nbsp; <b>우클릭/선택툴:</b> 속성 검사",
+                inspector: "인스펙터 (Inspector)",
+                selectTip: "부품을 우클릭(또는 선택툴 탭)하여 선택하세요.",
+                width: "가로 크기 (W)",
+                height: "세로 크기 (H)",
+                totalI: "전체 회로 전류량 (I)",
+                share: "회로 공유 & 불러오기",
+                copyBtn: "복사",
+                copyDone: "완료!",
+                loadBtn: "적용",
+                placeholder: "회로 코드를 붙여넣으세요",
+                tools: "도구 및 부품 (Tools)",
+                tSelect: "선택", tWire: "일자 전선", tCorner: "코너 전선", tTjunc: "T자 전선",
+                tRes: "저항", tBulb: "전구", tErase: "지우개", tBatt: "배터리",
+                bp: "회로도",
+                pVolts: "건전지 출력 전압 (V)", pRes: "해당 저항값 (R)", pBulb: "전구 내부 저항 (R)",
+                noProp: "추가 설정 속성이 없습니다.",
+                statusCopy: "✔️ 코드를 복사하여 언제든 회로를 공유할 수 있습니다.",
+                statusLoad: "✔️ 코드를 성공적으로 불러왔습니다!",
+                statusFail: "⚠️ 전류 0A (단선): 전원 연결이 끊겨 있습니다.",
+                statusShort: "🔥 단락(합선) 위험: 저항 없이 무한 전류가 흘러 회로가 과열되었습니다!",
+                invalidCode: "잘못된 회로 코드입니다. 텍스트를 다시 확인해주세요.",
+                tooltipV: "노드 전압(V)", tooltipI: "통과 전류(I)", floorI: "전체 전류",
+                tEmpty: "빈 공간",
+                tutBtn: "❓ Help", tutSkip: "건너뛰기", tutNext: "다음 👉", tutFinish: "시작하기 🚀",
+                tutSteps: [
+                    { id: null, text: "HydroVolt 3D에 오신 것을 환영합니다! 🎉\n\n전기의 움직임을 '물의 흐름'으로 직관적으로 관찰할 수 있는 시뮬레이터입니다." },
+                    { id: 'tut-target-tools', text: "먼저 여기서 전선, 저항, 전구, 배터리 등 원하는 부품을 선택하세요.\n스마트폰에서는 '선택' 도구를 자주 활용하게 됩니다." },
+                    { id: 'tut-target-grid', text: "이곳은 2D 설계도입니다.\n마우스 좌클릭(또는 터치)으로 빈 칸에 부품을 배치하고 회전시킬 수 있습니다." },
+                    { id: 'tut-target-inspector', text: "설계도에 놓은 부품에 우클릭(또는 선택툴 탭)을 하면,\n이곳에서 전압이나 저항 수치를 마음대로 바꿀 수 있습니다." },
+                    { id: 'tut-target-canvas', text: "설계도에 회로가 연결되면,\n이 3D 화면에서 물이 흐르는 높낮이(전압)와 수차(전구)가 도는 모습을 실시간으로 볼 수 있습니다!\n(마우스나 터치로 시점 변경 가능)" },
+                    { id: 'tut-target-share', text: "마지막으로 완성된 회로 코드를 복사해서 친구들에게 공유해 보세요.\n\n자, 이제 나만의 회로를 만들어보세요!" }
+                ],
+                exTitle: "예제 회로 불러오기",
+                exOpt: "-- 예제 선택 --",
+                examples: [
+                    { name: "1. 기본 직렬 회로", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFsxLDAsM10sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "2. 전구 2개 직렬", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDVdLFsxLDAsM10sWzUsMCw1XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "3. 저항 직렬", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFs0LDAsOV0sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "4. 저항 병렬", code: "eyJjIjo2LCJyIjo0LCJkIjpbWzAsMCwzXSxbMCwwLDNdLFsyLDEsM10sWzQsMCw5XSxbMiwyLDNdLFswLDAsM10sWzIsMSwzXSxbNSwwLDBdLFszLDMsM10sWzAsMCwzXSxbMywxLDNdLFsyLDIsM10sWzEsMSwzXSxbMCwwLDNdLFsyLDAsM10sWzQsMCw5XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "5. 전구 2개 병렬", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzAsMCwzXSxbMiwxLDNdLFs1LDAsNV0sWzIsMiwzXSxbMCwwLDNdLFsyLDEsM10sWzMsMywzXSxbMCwwLDNdLFszLDEsM10sWzIsMiwzXSxbMSwxLDNdLFsyLDAsM10sWzUsMCw1XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" },
+                    { name: "6. 휘트스톤 브릿지", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzIsMSwzXSxbNCwwLDldLFszLDIsM10sWzQsMCwxOF0sWzIsMiwzXSxbMSwxLDNdLFswLDAsM10sWzUsMSw1XSxbMCwwLDNdLFsxLDEsM10sWzMsMSwzXSxbNCwwLDQuNV0sWzMsMCwzXSxbNCwwLDldLFszLDMsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" }
+                ]
+            },
+            en: {
+                subtitle: "<b>Tap/Click:</b> Place/Rotate &nbsp; <b>R-Click/Select:</b> Inspect",
+                inspector: "Inspector",
+                selectTip: "Right-click or tap with Select tool to inspect.",
+                width: "Width (W)",
+                height: "Height (H)",
+                totalI: "Total Current (I)",
+                share: "Share & Load Circuit",
+                copyBtn: "Copy",
+                copyDone: "Copied!",
+                loadBtn: "Load",
+                placeholder: "Paste circuit code here",
+                tools: "Tools & Components",
+                tSelect: "Select", tWire: "Straight", tCorner: "Corner", tTjunc: "T-Junc",
+                tRes: "Resistor", tBulb: "Bulb", tErase: "Erase", tBatt: "Battery",
+                bp: "Blueprint",
+                pVolts: "Battery Voltage (V)", pRes: "Resistance (R)", pBulb: "Bulb Resistance (R)",
+                noProp: "No additional properties available.",
+                statusCopy: "✔️ Code ready to share your circuit.",
+                statusLoad: "✔️ Circuit loaded successfully!",
+                statusFail: "⚠️ 0A (Open Circuit): The circuit is disconnected.",
+                statusShort: "🔥 Short Circuit Risk: Infinite current without resistance has overheated the circuit!",
+                invalidCode: "Invalid circuit code. Please check the text.",
+                tooltipV: "Node Voltage (V)", tooltipI: "Pass Current (I)", floorI: "Total I",
+                tEmpty: "Empty Space",
+                tutBtn: "❓ Help", tutSkip: "Skip", tutNext: "Next 👉", tutFinish: "Start 🚀",
+                tutSteps: [
+                    { id: null, text: "Welcome to HydroVolt 3D! 🎉\n\nA simulator where you can intuitively see electricity flowing like water." },
+                    { id: 'tut-target-tools', text: "Select your desired tools here: wires, resistors, bulbs, and batteries." },
+                    { id: 'tut-target-grid', text: "This is the 2D Blueprint.\nLeft-click (or tap) to place and rotate components in empty slots." },
+                    { id: 'tut-target-inspector', text: "Right-click (or tap with Select tool) a placed component to change its voltage or resistance here." },
+                    { id: 'tut-target-canvas', text: "Once connected, you can see the water flowing and the waterwheel (bulb) spinning in real-time in this 3D view!\n(Drag to rotate camera)" },
+                    { id: 'tut-target-share', text: "Finally, copy your circuit code and share it with friends.\n\nYou are all set!" }
+                ],
+                exTitle: "Load Example Circuit",
+                exOpt: "-- Select Example --",
+                examples: [
+                    { name: "1. Basic Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFsxLDAsM10sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "2. Two Bulbs Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDVdLFsxLDAsM10sWzUsMCw1XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "3. Resistor Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFs0LDAsOV0sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "4. Resistor Parallel", code: "eyJjIjo2LCJyIjo0LCJkIjpbWzAsMCwzXSxbMCwwLDNdLFsyLDEsM10sWzQsMCw5XSxbMiwyLDNdLFswLDAsM10sWzIsMSwzXSxbNSwwLDBdLFszLDMsM10sWzAsMCwzXSxbMywxLDNdLFsyLDIsM10sWzEsMSwzXSxbMCwwLDNdLFsyLDAsM10sWzQsMCw5XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "5. Two Bulbs Parallel", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzAsMCwzXSxbMiwxLDNdLFs1LDAsNV0sWzIsMiwzXSxbMCwwLDNdLFsyLDEsM10sWzMsMywzXSxbMCwwLDNdLFszLDEsM10sWzIsMiwzXSxbMSwxLDNdLFsyLDAsM10sWzUsMCw1XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" },
+                    { name: "6. Wheatstone Bridge", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzIsMSwzXSxbNCwwLDldLFszLDIsM10sWzQsMCwxOF0sWzIsMiwzXSxbMSwxLDNdLFswLDAsM10sWzUsMSw1XSxbMCwwLDNdLFsxLDEsM10sWzMsMSwzXSxbNCwwLDQuNV0sWzMsMCwzXSxbNCwwLDldLFszLDMsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" }
+                ]
+            }
+        };
+
+        let lang = 'ko';
+        let currentTutStep = 0;
+        let isTutorialActive = false;
+
+        function applyLanguage() {
+            document.getElementById('ui-subtitle').innerHTML = i18n[lang].subtitle;
+            document.getElementById('ui-inspector-title').textContent = i18n[lang].inspector;
+            document.getElementById('ui-width').textContent = i18n[lang].width;
+            document.getElementById('ui-height').textContent = i18n[lang].height;
+            document.getElementById('ui-totalI').textContent = i18n[lang].totalI;
+            document.getElementById('ui-share-title').textContent = i18n[lang].share;
+            document.getElementById('btn-copy').textContent = i18n[lang].copyBtn;
+            document.getElementById('btn-load').textContent = i18n[lang].loadBtn;
+            document.getElementById('import-code').placeholder = i18n[lang].placeholder;
+            document.getElementById('ui-tools-title').textContent = i18n[lang].tools;
+            
+            document.getElementById('t-select').textContent = i18n[lang].tSelect;
+            document.getElementById('t-wire').textContent = i18n[lang].tWire;
+            document.getElementById('t-corner').textContent = i18n[lang].tCorner;
+            document.getElementById('t-tjunc').textContent = i18n[lang].tTjunc;
+            document.getElementById('t-res').textContent = i18n[lang].tRes;
+            document.getElementById('t-bulb').textContent = i18n[lang].tBulb;
+            document.getElementById('t-erase').textContent = i18n[lang].tErase;
+            document.getElementById('t-batt').textContent = i18n[lang].tBatt;
+
+            document.getElementById('blueprint-title').textContent = `${i18n[lang].bp} (${COLS}x${ROWS})`;
+            document.getElementById('lang-toggle').textContent = lang === 'ko' ? '🇺🇸 EN' : '🇰🇷 KO';
+            document.getElementById('btn-tutorial').textContent = i18n[lang].tutBtn;
+            
+            document.getElementById('ui-example-title').textContent = i18n[lang].exTitle;
+            const selectEl = document.getElementById('example-select');
+            selectEl.innerHTML = `<option value="">${i18n[lang].exOpt}</option>`;
+            i18n[lang].examples.forEach(ex => {
+                const opt = document.createElement('option');
+                opt.value = ex.code;
+                opt.textContent = ex.name;
+                selectEl.appendChild(opt);
+            });
+
+            if(isTutorialActive) updateTutorialUI();
+            
+            updateInspector();
+            applyPhysics();
+        }
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            lang = lang === 'ko' ? 'en' : 'ko';
+            applyLanguage();
+        });
+
+        document.getElementById('example-select').addEventListener('change', (e) => {
+            const code = e.target.value;
+            if(!code) return;
+            document.getElementById('import-code').value = code;
+            document.getElementById('btn-load').click();
+            e.target.value = ''; 
+        });
+
+        function startTutorial() {
+            isTutorialActive = true;
+            currentTutStep = 0;
+            document.getElementById('tutorial-overlay').classList.remove('hidden');
+            document.getElementById('canvas-container').style.pointerEvents = 'none';
+            updateTutorialUI();
+        }
+
+        function endTutorial() {
+            isTutorialActive = false;
+            document.getElementById('tutorial-overlay').classList.add('hidden');
+            document.getElementById('tut-highlighter').classList.add('hidden');
+            document.getElementById('canvas-container').style.pointerEvents = 'auto';
+        }
+
+        function updateTutorialUI() {
+            const steps = i18n[lang].tutSteps;
+            const currentObj = steps[currentTutStep];
+            const highlighter = document.getElementById('tut-highlighter');
+            
+            if(currentObj.id) {
+                const el = document.getElementById(currentObj.id);
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                setTimeout(() => {
+                    const rect = el.getBoundingClientRect();
+                    highlighter.style.left = (rect.left - 4) + 'px';
+                    highlighter.style.top = (rect.top - 4) + 'px';
+                    highlighter.style.width = (rect.width + 8) + 'px';
+                    highlighter.style.height = (rect.height + 8) + 'px';
+                    highlighter.classList.remove('hidden');
+                }, 300);
+            } else {
+                highlighter.classList.add('hidden');
+                highlighter.style.left = '50%';
+                highlighter.style.top = '50%';
+                highlighter.style.width = '0px';
+                highlighter.style.height = '0px';
+                highlighter.classList.remove('hidden');
+            }
+
+            document.getElementById('tutorial-text').textContent = currentObj.text;
+            document.getElementById('tut-step-badge').textContent = `${currentTutStep + 1}/${steps.length}`;
+            document.getElementById('tut-skip').textContent = i18n[lang].tutSkip;
+            
+            const btnNext = document.getElementById('tut-next');
+            if (currentTutStep === steps.length - 1) {
+                btnNext.textContent = i18n[lang].tutFinish;
+            } else {
+                btnNext.textContent = i18n[lang].tutNext;
+            }
+        }
+
+        document.getElementById('btn-tutorial').addEventListener('click', startTutorial);
+        document.getElementById('tut-skip').addEventListener('click', endTutorial);
+        document.getElementById('tut-next').addEventListener('click', () => {
+            if (currentTutStep < i18n[lang].tutSteps.length - 1) {
+                currentTutStep++;
+                updateTutorialUI();
+            } else {
+                endTutorial();
+            }
+        });
+
+        // ==========================================
+        // 1. 데이터 모델 (5x3 초기화)
+        // ==========================================
+        let ROWS = 3, COLS = 5;
+        let grid = Array(ROWS).fill(0).map(()=>Array(COLS).fill(0).map(()=>({t:0, r:0, v:3.0})));
+        let nodeV = Array(ROWS).fill(0).map(()=>Array(COLS).fill(0));
+        let selectedTool = 1; 
+        let selectedCell = null; 
+        let lastMaxCurrent = 0; 
+        let isCircuitFlowing = true;
+        let isShortCircuit = false;
+
+        const initLayout = [
+            [{t:2,r:1,v:3}, {t:1,r:0,v:3}, {t:6,r:0,v:9}, {t:1,r:0,v:3}, {t:2,r:2,v:3}],
+            [{t:1,r:1,v:3}, {t:0,r:0,v:3}, {t:0,r:0,v:3}, {t:0,r:0,v:3}, {t:1,r:1,v:3}],
+            [{t:2,r:0,v:3}, {t:4,r:0,v:4}, {t:1,r:0,v:3}, {t:5,r:0,v:5}, {t:2,r:3,v:3}] 
+        ];
+        for(let z=0; z<ROWS; z++) for(let x=0; x<COLS; x++) grid[z][x] = { ...initLayout[z][x] };
+
+        function updateExportCode() {
+            const data = { c: COLS, r: ROWS, d: [] };
+            for(let z=0; z<ROWS; z++) {
+                for(let x=0; x<COLS; x++) {
+                    data.d.push([grid[z][x].t, grid[z][x].r, grid[z][x].v]);
+                }
+            }
+            const code = btoa(JSON.stringify(data));
+            document.getElementById('export-code').value = code;
+        }
+
+        document.getElementById('btn-copy').addEventListener('click', () => {
+            const codeInput = document.getElementById('export-code');
+            codeInput.select();
+            document.execCommand('copy');
+            const btn = document.getElementById('btn-copy');
+            btn.innerText = i18n[lang].copyDone;
+            btn.classList.add("bg-emerald-600");
+            setTimeout(() => {
+                btn.innerText = i18n[lang].copyBtn;
+                btn.classList.remove("bg-emerald-600");
+            }, 1500);
+        });
+
+        document.getElementById('btn-load').addEventListener('click', () => {
+            const code = document.getElementById('import-code').value.trim();
+            if(!code) return;
+            try {
+                const data = JSON.parse(atob(code));
+                if(data.c && data.r && data.d) {
+                    document.getElementById('slider-cols').value = data.c; document.getElementById('input-cols').value = data.c;
+                    document.getElementById('slider-rows').value = data.r; document.getElementById('input-rows').value = data.r;
+                    ROWS = data.r; COLS = data.c;
+                    
+                    grid = Array(ROWS).fill(0).map(()=>Array(COLS).fill(0).map(()=>({t:0, r:0, v:3.0})));
+                    nodeV = Array(ROWS).fill(0).map(()=>Array(COLS).fill(0));
+                    
+                    let idx = 0;
+                    for(let z=0; z<ROWS; z++) {
+                        for(let x=0; x<COLS; x++) {
+                            const [t, r, v] = data.d[idx++];
+                            grid[z][x] = {t, r, v};
+                        }
+                    }
+                    
+                    selectedCell = null;
+                    document.getElementById('blueprint-title').textContent = `${i18n[lang].bp} (${COLS}x${ROWS})`;
+                    updateCameraTarget();
+                    viewSize = Math.max(COLS, ROWS) * 0.7 + 2; 
+                    window.dispatchEvent(new Event('resize')); 
+                    
+                    applyPhysics();
+                    document.getElementById('import-code').value = '';
+                    
+                    const st = document.getElementById('status-box');
+                    st.className = "text-[11px] p-3 rounded font-mono mt-4 bg-emerald-900/40 text-emerald-400 border border-emerald-800";
+                    st.innerText = i18n[lang].statusLoad;
+                } else {
+                    throw new Error("Invalid format");
+                }
+            } catch(e) {
+                alert(i18n[lang].invalidCode);
+            }
+        });
+
+        function getPorts(t, r) {
+            if(t===0) return [0,0,0,0]; 
+            if(t===1 || t===4 || t===5 || t===6) return (r%2===0) ? [0,1,0,1] : [1,0,1,0]; 
+            if(t===2) return [[1,1,0,0], [0,1,1,0], [0,0,1,1], [1,0,0,1]][r];
+            if(t===3) return [[1,1,0,1], [1,1,1,0], [0,1,1,1], [1,0,1,1]][r];
+            return [0,0,0,0];
+        }
+
+        function isConnected(z1, x1, z2, x2) {
+            if(z1<0||z1>=ROWS||x1<0||x1>=COLS||z2<0||z2>=ROWS||x2<0||x2>=COLS) return false;
+            const p1 = getPorts(grid[z1][x1].t, grid[z1][x1].r);
+            const p2 = getPorts(grid[z2][x2].t, grid[z2][x2].r);
+            if (z2 === z1 - 1 && x2 === x1) return p1[0] && p2[2]; 
+            if (z2 === z1 && x2 === x1 + 1) return p1[1] && p2[3]; 
+            if (z2 === z1 + 1 && x2 === x1) return p1[2] && p2[0]; 
+            if (z2 === z1 && x2 === x1 - 1) return p1[3] && p2[1]; 
+            return false;
+        }
+
+        function getResistance(cell) {
+            if(cell.t === 6) return 1e-5; 
+            if(cell.t === 4 || cell.t === 5) return Math.max(1e-5, cell.v / 2.0); 
+            return 1e-5; 
+        }
+
+        // ==========================================
+        // 2. 물리 엔진 (SPICE) 및 단락(합선) 감지 시스템
+        // ==========================================
+        function solveGaussian(A, B) {
+            const n = B.length;
+            const x = new Array(n).fill(0);
+            for (let i = 0; i < n; i++) {
+                let maxEl = Math.abs(A[i][i]), maxRow = i;
+                for (let k = i + 1; k < n; k++) {
+                    if (Math.abs(A[k][i]) > maxEl) { maxEl = Math.abs(A[k][i]); maxRow = k; }
+                }
+                if (maxEl < 1e-12) continue; 
+                if (maxRow !== i) {
+                    let tmp = A[maxRow]; A[maxRow] = A[i]; A[i] = tmp;
+                    let tmpB = B[maxRow]; B[maxRow] = B[i]; B[i] = tmpB;
+                }
+                for (let k = i + 1; k < n; k++) {
+                    const c = -A[k][i] / A[i][i];
+                    for (let j = i; j < n; j++) {
+                        if (i === j) A[k][j] = 0;
+                        else A[k][j] += c * A[i][j];
+                    }
+                    B[k] += c * B[i];
+                }
+            }
+            for (let i = n - 1; i >= 0; i--) {
+                if (Math.abs(A[i][i]) < 1e-12) { x[i] = 0; continue; }
+                x[i] = B[i] / A[i][i];
+                for (let k = i - 1; k >= 0; k--) {
+                    B[k] -= A[k][i] * x[i];
+                }
+            }
+            return x;
+        }
+
+        function solvePhysics() {
+            const N = ROWS * COLS;
+            const A_mat = Array(N).fill(0).map(() => Array(N).fill(0));
+            const B_vec = Array(N).fill(0);
+
+            for(let i=0; i<N; i++) A_mat[i][i] = 1e-10;
+
+            let batteryFound = false;
+            let hasResistorOrBulb = false; 
+
+            for (let z=0; z<ROWS; z++) {
+                for (let x=0; x<COLS; x++) {
+                    const c1 = grid[z][x];
+                    if (c1.t === 0) continue;
+                    if (c1.t === 4 || c1.t === 5) hasResistorOrBulb = true;
+                    
+                    const idx1 = z * COLS + x;
+
+                    const neighbors = [[z, x+1], [z+1, x]];
+                    for (let [nz, nx] of neighbors) {
+                        if (isConnected(z, x, nz, nx)) {
+                            const c2 = grid[nz][nx];
+                            const idx2 = nz * COLS + nx;
+
+                            const R_link = getResistance(c1) + getResistance(c2);
+                            const G = 1.0 / R_link;
+
+                            A_mat[idx1][idx1] += G; A_mat[idx2][idx2] += G;
+                            A_mat[idx1][idx2] -= G; A_mat[idx2][idx1] -= G;
+
+                            if (c1.t === 6) {
+                                const plusPort = (c1.r + 1) % 4;
+                                const dirToN = (nz===z-1)?0 : (nx===x+1)?1 : (nz===z+1)?2 : 3;
+                                const isPlus = (plusPort === dirToN);
+                                const V_src = isPlus ? c1.v : -c1.v;
+                                const I_norton = (V_src / 2) * G;
+                                B_vec[idx2] += I_norton; B_vec[idx1] -= I_norton;
+                            }
+                            if (c2.t === 6) {
+                                const plusPort = (c2.r + 1) % 4;
+                                const dirToC = (z===nz-1)?0 : (x===nx+1)?1 : (z===nz+1)?2 : 3;
+                                const isPlus = (plusPort === dirToC);
+                                const V_src = isPlus ? c2.v : -c2.v;
+                                const I_norton = (V_src / 2) * G;
+                                B_vec[idx1] += I_norton; B_vec[idx2] -= I_norton;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for(let z=0; z<ROWS; z++) {
+                for(let x=0; x<COLS; x++) {
+                    if(grid[z][x].t === 6 && !batteryFound) {
+                        const minusPort = (grid[z][x].r + 3) % 4;
+                        const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+                        const nz = z + dirs[minusPort][0], nx = x + dirs[minusPort][1];
+                        
+                        if (isConnected(z, x, nz, nx)) {
+                            const gndIdx = nz * COLS + nx;
+                            A_mat[gndIdx].fill(0); A_mat[gndIdx][gndIdx] = 1; B_vec[gndIdx] = 0; 
+                            batteryFound = true;
+                        }
+                    }
+                }
+            }
+
+            const solvedV = solveGaussian(A_mat, B_vec);
+
+            for (let z=0; z<ROWS; z++) {
+                for (let x=0; x<COLS; x++) {
+                    let v = solvedV[z * COLS + x];
+                    if(isNaN(v) || !isFinite(v)) v = 0;
+                    nodeV[z][x] = v;
+                }
+            }
+
+            let maxCurrent = 0;
+            isCircuitFlowing = false;
+
+            for (let z=0; z<ROWS; z++) {
+                for (let x=0; x<COLS; x++) {
+                    if (grid[z][x].t === 6) {
+                        const plusPort = (grid[z][x].r + 1) % 4;
+                        const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+                        const pz = z + dirs[plusPort][0], px = x + dirs[plusPort][1];
+                        
+                        if (isConnected(z, x, pz, px)) {
+                            const current = getCurrent(z, x, pz, px);
+                            if (Math.abs(current) > maxCurrent) maxCurrent = Math.abs(current);
+                            if (Math.abs(current) > 0.01) isCircuitFlowing = true;
+                        }
+                    }
+                }
+            }
+
+            lastMaxCurrent = maxCurrent; 
+
+            isShortCircuit = batteryFound && !hasResistorOrBulb && (maxCurrent > 50.0) && isCircuitFlowing;
+
+            const st = document.getElementById('status-box');
+            if (isShortCircuit) {
+                document.getElementById('out-itotal').textContent = `OVERHEAT 🔥`;
+                document.getElementById('out-itotal').className = "text-red-500 font-mono font-bold animate-pulse";
+                st.className = "text-[11px] p-3 rounded font-mono mt-4 bg-red-950 text-red-400 border border-red-600 animate-bounce";
+                st.innerText = i18n[lang].statusShort;
+            } else if (isCircuitFlowing) {
+                document.getElementById('out-itotal').textContent = `${maxCurrent.toFixed(2)} A`;
+                document.getElementById('out-itotal').className = "text-green-400 font-mono font-bold";
+                if(st.innerText.indexOf('!') === -1) {
+                    st.className = "text-[11px] p-3 rounded font-mono mt-4 bg-green-900/40 text-green-400 border border-green-800";
+                    st.innerText = i18n[lang].statusCopy;
+                }
+            } else {
+                document.getElementById('out-itotal').textContent = `0.00 A`;
+                document.getElementById('out-itotal').className = "text-red-400 font-mono font-bold";
+                st.className = "text-[11px] p-3 rounded font-mono mt-4 bg-red-900/40 text-red-400 border border-red-800";
+                st.innerText = i18n[lang].statusFail;
+            }
+            
+            updateExportCode(); 
+        }
+
+        function getCurrent(z1, x1, z2, x2) {
+            const c1 = grid[z1][x1], c2 = grid[z2][x2];
+            let E_1to2 = 0;
+
+            if (c1.t === 6) {
+                const plusPort = (c1.r + 1) % 4;
+                const dirTo2 = (z2===z1-1)?0 : (x2===x1+1)?1 : (z2===z1+1)?2 : 3;
+                E_1to2 += (dirTo2 === plusPort) ? c1.v/2 : -c1.v/2;
+            }
+            if (c2.t === 6) {
+                const plusPort = (c2.r + 1) % 4;
+                const dirTo1 = (z1===z2-1)?0 : (x1===x2+1)?1 : (z1===z2+1)?2 : 3;
+                E_1to2 += (dirTo1 === plusPort) ? -c2.v/2 : c2.v/2;
+            }
+
+            const R_link = Math.max(1e-5, getResistance(c1) + getResistance(c2));
+            let I = (nodeV[z1][x1] - nodeV[z2][x2] + E_1to2) / R_link;
+            
+            if (Math.abs(I) < 1e-4) I = 0;
+            return I;
+        }
+
+        // ==========================================
+        // 4. 3D 렌더링 코어 (웨일 브라우저 우클릭 제스처 차단 적용)
+        // ==========================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        
+        let w = container.clientWidth || window.innerWidth;
+        let h = container.clientHeight || window.innerHeight;
+        const aspect = w / h;
+        let viewSize = Math.max(COLS, ROWS) * 0.7 + 2; 
+        
+        const camera = new THREE.OrthographicCamera(-viewSize*aspect, viewSize*aspect, viewSize, -viewSize, -1000, 1000);
+        camera.position.set(-10, 14, 12); 
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(w, h);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        // ★ 웨일 및 브라우저 우클릭 마우스 제스처 원천 차단 ★
+        const domEl = renderer.domElement;
+        domEl.addEventListener('contextmenu', (e) => e.preventDefault());
+        domEl.addEventListener('mousedown', (e) => { if (e.button === 2) e.preventDefault(); });
+        domEl.addEventListener('pointerdown', (e) => { if (e.button === 2) e.preventDefault(); });
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableZoom = true; controls.minZoom = 0.5; controls.maxZoom = 4.0; 
+        
+        function updateCameraTarget() {
+            const cx = (COLS - 1) / 2;
+            const cz = (ROWS - 1) / 2;
+            controls.target.set(cx, 0, cz);
+            camera.position.set(cx - 10, 14, cz + 12);
+        }
+        updateCameraTarget();
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.7));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight.position.set(-10, 25, 15); 
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048; dirLight.shadow.mapSize.height = 2048;
+        scene.add(dirLight);
+
+        const mCfg = { roughness: 0.8, metalness: 0.1 };
+        const colorMap = {
+            1: new THREE.MeshStandardMaterial({ color: 0x16a34a, ...mCfg }), 
+            2: new THREE.MeshStandardMaterial({ color: 0x16a34a, ...mCfg }), 
+            3: new THREE.MeshStandardMaterial({ color: 0x16a34a, ...mCfg }), 
+            4: new THREE.MeshStandardMaterial({ color: 0xea580c, ...mCfg }), 
+            5: new THREE.MeshStandardMaterial({ color: 0x475569, ...mCfg }), 
+            6: new THREE.MeshStandardMaterial({ color: 0x1f2937, ...mCfg })  
+        };
+        const edgeMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2, transparent: true, opacity: 0.3 });
+
+        const matMetal = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.2, metalness: 0.8 });
+        const axisMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.8 });
+        const paddleMat = new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 1.0 });
+
+        function createDashTex(isAxisZ) {
+            const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128; const ctx = cv.getContext('2d');
+            ctx.fillStyle = '#0ea5e9'; ctx.fillRect(0,0,128,128);
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            if(isAxisZ) { ctx.fillRect(60, 20, 8, 30); ctx.fillRect(60, 80, 8, 20); }
+            else { ctx.fillRect(20, 60, 30, 8); ctx.fillRect(80, 60, 20, 8); }
+            const tex = new THREE.CanvasTexture(cv);
+            tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+            return tex;
+        }
+        const globalTexX = createDashTex(false);
+        const globalTexZ = createDashTex(true);
+
+        const terrainGroup = new THREE.Group(); scene.add(terrainGroup);
+        const waterGroup = new THREE.Group(); scene.add(waterGroup);
+        let animatables = []; 
+
+        const floor = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1).translate(0, -0.5, 0), new THREE.MeshStandardMaterial({ color: 0x334155 }));
+        floor.receiveShadow = true; terrainGroup.add(floor);
+
+        function disposeGroup(group) {
+            const objects = [];
+            group.children.forEach(child => child.traverse(obj => objects.push(obj)));
+            
+            for (let i = objects.length - 1; i >= 0; i--) {
+                const obj = objects[i];
+                if (obj.parent) obj.parent.remove(obj);
+                if (obj.geometry) obj.geometry.dispose();
+                if (obj.material) {
+                    if (obj.material.map) {
+                        obj.material.map.dispose();
+                        obj.material.dispose();
+                    } else if (obj.material.isDynamicBulb || obj.material.isFloorText) {
+                        if(obj.material.map) obj.material.map.dispose();
+                        obj.material.dispose();
+                    }
+                }
+            }
+        }
+
+        function getBatteryBase(bz, bx, visited = new Set()) {
+            if (visited.has(bz + "," + bx)) return 0;
+            visited.add(bz + "," + bx);
+            
+            const bCell = grid[bz][bx];
+            const mPort = (bCell.r + 3) % 4;
+            const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+            const nZ = bz + dirs[mPort][0], nX = bx + dirs[mPort][1];
+
+            if (isConnected(bz, bx, nZ, nX)) {
+                const nCell = grid[nZ][nX];
+                if (nCell.t === 6) {
+                    const nPlusPort = (nCell.r + 1) % 4;
+                    const dirToMe = (bz===nZ-1)?0 : (bx===nX+1)?1 : (bz===nZ+1)?2 : 3;
+                    if (nPlusPort === dirToMe) {
+                        return getBatteryBase(nZ, nX, visited) + nCell.v;
+                    }
+                }
+                return getBoundaryHeight(bz, bx, nZ, nX);
+            }
+            return Math.max(0, nodeV[bz][bx] - bCell.v / 2);
+        }
+
+        function getBoundaryHeight(cz, cx, nz, nx) {
+            if (isConnected(cz, cx, nz, nx)) {
+                const cCell = grid[cz][cx], nCell = grid[nz][nx];
+                let cv = nodeV[cz][cx], nv = nodeV[nz][nx];
+                
+                let E1 = 0;
+                if (cCell.t === 6) {
+                    const plusPort = (cCell.r + 1) % 4;
+                    const myDirToN = (nz===cz-1)?0 : (nx===cx+1)?1 : (nz===cz+1)?2 : 3;
+                    E1 = (myDirToN === plusPort) ? cCell.v / 2 : -cCell.v / 2;
+                }
+                let E2 = 0;
+                if (nCell.t === 6) {
+                    const plusPort = (nCell.r + 1) % 4;
+                    const nDirToC = (cz===nz-1)?0 : (cx===nx+1)?1 : (cz===nz+1)?2 : 3;
+                    E2 = (nDirToC === plusPort) ? nCell.v / 2 : -nCell.v / 2;
+                }
+
+                const r1 = getResistance(cCell), r2 = getResistance(nCell);
+                const v_boundary = ((cv + E1) * r2 + (nv + E2) * r1) / (r1 + r2);
+                return Math.max(0, v_boundary); 
+            }
+            return Math.max(0, nodeV[cz][cx]); 
+        }
+
+        function getEdgeHeight(cz, cx, dirIdx) {
+            const cCell = grid[cz][cx];
+            if (cCell.t === 6) {
+                const pPort = (cCell.r + 1) % 4;
+                const mPort = (cCell.r + 3) % 4;
+                const v_minus = getBatteryBase(cz, cx);
+                if (dirIdx === pPort) return Math.max(0.1, v_minus + cCell.v);
+                if (dirIdx === mPort) return Math.max(0.1, v_minus);
+                return Math.max(0.1, v_minus);
+            }
+            if (cCell.t === 4 || cCell.t === 5) {
+                const isHoriz = (cCell.r % 2 === 0);
+                if (isHoriz) {
+                    if (dirIdx === 3) return getBoundaryHeight(cz, cx, cz, cx-1);
+                    if (dirIdx === 1) return getBoundaryHeight(cz, cx, cz, cx+1);
+                } else {
+                    if (dirIdx === 0) return getBoundaryHeight(cz, cx, cz-1, cx);
+                    if (dirIdx === 2) return getBoundaryHeight(cz, cx, cz+1, cx);
+                }
+            }
+            return Math.max(0.1, nodeV[cz][cx]);
+        }
+
+        function build3D() {
+            disposeGroup(terrainGroup);
+            disposeGroup(waterGroup);
+            animatables = [];
+            const processedEdges = new Set(); 
+
+            const HEIGHT_SCALE = 0.5;
+            const toH = (volt) => Math.min(15, Math.max(0.1, volt * HEIGHT_SCALE));
+
+            floor.geometry = new THREE.BoxGeometry(COLS + 4, 1, ROWS + 4).translate(0, -0.5, 0);
+            floor.position.set((COLS-1)/2, 0, (ROWS-1)/2);
+            terrainGroup.add(floor);
+
+            if (isCircuitFlowing) {
+                const tCanvas = document.createElement('canvas');
+                tCanvas.width = 512; tCanvas.height = 128;
+                const tCtx = tCanvas.getContext('2d');
+                tCtx.fillStyle = 'rgba(0,0,0,0)'; 
+                tCtx.fillRect(0,0,512,128);
+                tCtx.font = 'bold 50px "Inter", sans-serif';
+                tCtx.fillStyle = isShortCircuit ? 'rgba(239, 68, 68, 0.9)' : 'rgba(74, 222, 128, 0.9)'; 
+                tCtx.textAlign = 'center';
+                tCtx.textBaseline = 'middle';
+                tCtx.fillText(isShortCircuit ? `OVERHEAT (SHORT CIRCUIT)` : `${i18n[lang].floorI}: ${lastMaxCurrent.toFixed(2)} A`, 256, 64);
+                
+                const tTex = new THREE.CanvasTexture(tCanvas);
+                const tGeo = new THREE.PlaneGeometry(COLS, 1.2).rotateX(-Math.PI/2);
+                const tMat = new THREE.MeshBasicMaterial({ map: tTex, transparent: true, depthWrite: false });
+                tMat.isFloorText = true; 
+                const tMesh = new THREE.Mesh(tGeo, tMat);
+                tMesh.position.set((COLS-1)/2, 0.01, ROWS + 0.2); 
+                terrainGroup.add(tMesh);
+            }
+
+            for(let z=0; z<ROWS; z++) {
+                for(let x=0; x<COLS; x++) {
+                    const cell = grid[z][x];
+                    if(cell.t === 0) continue;
+
+                    const v = nodeV[z][x];
+                    const h = toH(v); 
+
+                    let activeMat = colorMap[cell.t];
+                    if (isShortCircuit) {
+                        activeMat = new THREE.MeshStandardMaterial({ 
+                            color: 0xef4444, 
+                            emissive: 0xef4444, 
+                            emissiveIntensity: 0.6,
+                            roughness: 0.5 
+                        });
+                    }
+
+                    if(cell.t === 6) {
+                        const plusPort = (cell.r + 1) % 4;
+                        const posDir = [[-1,0], [0,1], [1,0], [0,-1]][plusPort];
+                        const minusPort = (cell.r + 3) % 4;
+                        const negDir = [[-1,0], [0,1], [1,0], [0,-1]][minusPort];
+                        
+                        const isHorizontal = (plusPort === 1 || plusPort === 3); 
+                        const minusW = isHorizontal ? 0.5 : 1.0;
+                        const minusD = isHorizontal ? 1.0 : 0.5;
+
+                        let v_minus = getBatteryBase(z, x);
+                        let v_plus = v_minus + cell.v;
+
+                        const h_minus = toH(v_minus);
+                        const h_plus = toH(v_plus);
+
+                        const mGeo = new THREE.BoxGeometry(minusW, h_minus, minusD).translate(0, h_minus/2, 0);
+                        const mMesh = new THREE.Mesh(mGeo, activeMat);
+                        mMesh.position.set(x + negDir[1]*0.25, 0, z + negDir[0]*0.25);
+                        mMesh.castShadow = true; mMesh.receiveShadow = true;
+                        mMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(mGeo), edgeMat));
+                        mMesh.userData = { z, x }; 
+                        terrainGroup.add(mMesh);
+
+                        const pGeo = new THREE.BoxGeometry(minusW, h_plus, minusD).translate(0, h_plus/2, 0);
+                        const pMesh = new THREE.Mesh(pGeo, activeMat);
+                        pMesh.position.set(x + posDir[1]*0.25, 0, z + posDir[0]*0.25);
+                        pMesh.castShadow = true; pMesh.receiveShadow = true;
+                        pMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(pGeo), edgeMat));
+                        pMesh.userData = { z, x };
+                        terrainGroup.add(pMesh);
+
+                        const pipeH = Math.max(0.1, (h_plus + 0.6) - h_minus); 
+                        
+                        const vPipeX = x + negDir[1]*0.15;
+                        const vPipeZ = z + negDir[0]*0.15;
+                        const vPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, pipeH, 16).translate(0, pipeH/2, 0), matMetal);
+                        vPipe.position.set(vPipeX, h_minus, vPipeZ);
+                        vPipe.castShadow = true;
+                        vPipe.userData = { z, x };
+                        terrainGroup.add(vPipe);
+
+                        const dropX = x + posDir[1]*0.25;
+                        const dropZ = z + posDir[0]*0.25;
+                        const hPipeLen = 0.45;
+                        const hPipeX = (vPipeX + dropX) / 2;
+                        const hPipeZ = (vPipeZ + dropZ) / 2;
+
+                        const hPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, hPipeLen, 16), matMetal);
+                        if (isHorizontal) hPipe.rotation.z = Math.PI / 2;
+                        else hPipe.rotation.x = Math.PI / 2;
+                        hPipe.position.set(hPipeX, h_plus + 0.6 - 0.06, hPipeZ);
+                        hPipe.castShadow = true;
+                        hPipe.userData = { z, x };
+                        terrainGroup.add(hPipe);
+
+                        const waterW = isHorizontal ? 0.5 : 0.4;
+                        const waterD = isHorizontal ? 0.4 : 0.5;
+
+                        const pTex = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const pWaterGeo = new THREE.PlaneGeometry(waterW, waterD).rotateX(-Math.PI/2);
+                        const pWaterMesh = new THREE.Mesh(pWaterGeo, new THREE.MeshBasicMaterial({ map: pTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
+                        pWaterMesh.position.set(x + posDir[1]*0.25, h_plus + 0.015, z + posDir[0]*0.25);
+                        pWaterMesh.userData = { z, x };
+                        waterGroup.add(pWaterMesh);
+
+                        const mTex = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const mWaterGeo = new THREE.PlaneGeometry(waterW, waterD).rotateX(-Math.PI/2);
+                        const mWaterMesh = new THREE.Mesh(mWaterGeo, new THREE.MeshBasicMaterial({ map: mTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
+                        mWaterMesh.position.set(x + negDir[1]*0.25, h_minus + 0.015, z + negDir[0]*0.25);
+                        mWaterMesh.userData = { z, x };
+                        waterGroup.add(mWaterMesh);
+
+                        const I_pump = isConnected(z, x, z + posDir[0], x + posDir[1]) ? getCurrent(z, x, z + posDir[0], x + posDir[1]) : 0;
+                        const absI = Math.abs(I_pump);
+
+                        const dropDiff = (h_minus + pipeH) - h_plus - 0.1;
+                        if(dropDiff > 0) {
+                            const dropTex = globalTexZ.clone(); dropTex.repeat.set(1, dropDiff * 2);
+                            const drop = new THREE.Mesh(
+                                new THREE.PlaneGeometry(0.15, dropDiff).translate(0, -dropDiff/2, 0),
+                                new THREE.MeshBasicMaterial({ map: dropTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 })
+                            );
+                            drop.position.set(dropX, h_minus + pipeH - 0.1, dropZ);
+                            drop.rotation.y = (isHorizontal) ? (plusPort === 1 ? -Math.PI/2 : Math.PI/2) : (plusPort === 2 ? 0 : Math.PI);
+                            drop.userData = { z, x };
+                            waterGroup.add(drop);
+                            animatables.push(delta => dropTex.offset.y += absI * delta * (isShortCircuit ? 15.0 : 4.0)); 
+                        }
+
+                        const upTex = globalTexZ.clone();
+                        const upH = pipeH - 0.2;
+                        const upMesh = new THREE.Mesh(
+                            new THREE.CylinderGeometry(0.13, 0.13, upH, 16).translate(0, upH/2, 0),
+                            new THREE.MeshBasicMaterial({ map: upTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.5 })
+                        );
+                        upMesh.position.set(vPipeX, h_minus + 0.1, vPipeZ);
+                        upMesh.userData = { z, x };
+                        waterGroup.add(upMesh);
+                        animatables.push(delta => upTex.offset.y -= absI * delta * 2.0); 
+
+                        continue; 
+                    }
+
+                    if (cell.t === 5) {
+                        const isHorizontal = (cell.r % 2 === 0);
+                        let v1 = v, v2 = v; 
+                        
+                        if (isHorizontal) {
+                            v1 = getBoundaryHeight(z, x, z, x-1); 
+                            v2 = getBoundaryHeight(z, x, z, x+1); 
+                        } else {
+                            v1 = getBoundaryHeight(z, x, z-1, x); 
+                            v2 = getBoundaryHeight(z, x, z+1, x); 
+                        }
+
+                        let h1 = toH(v1);
+                        let h2 = toH(v2);
+
+                        const isH1High = h1 >= h2;
+                        const highH = Math.max(h1, h2);
+                        
+                        const len1 = 0.5;
+                        const len2 = 0.5;
+                        const offset1 = -0.25;
+                        const offset2 =  0.25;
+
+                        const w1 = isHorizontal ? len1 : 1.0;
+                        const d1 = isHorizontal ? 1.0 : len1;
+                        const w2 = isHorizontal ? len2 : 1.0;
+                        const d2 = isHorizontal ? 1.0 : len2;
+
+                        const cx1 = isHorizontal ? x + offset1 : x;
+                        const cz1 = isHorizontal ? z : z + offset1;
+                        const cx2 = isHorizontal ? x + offset2 : x;
+                        const cz2 = isHorizontal ? z : z + offset2;
+
+                        const geo1 = new THREE.BoxGeometry(w1, h1, d1).translate(0, h1/2, 0);
+                        const mesh1 = new THREE.Mesh(geo1, activeMat);
+                        mesh1.position.set(cx1, 0, cz1);
+                        mesh1.castShadow = true; mesh1.receiveShadow = true;
+                        mesh1.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo1), edgeMat));
+                        mesh1.userData = { z, x };
+                        terrainGroup.add(mesh1);
+
+                        const geo2 = new THREE.BoxGeometry(w2, h2, d2).translate(0, h2/2, 0);
+                        const mesh2 = new THREE.Mesh(geo2, activeMat);
+                        mesh2.position.set(cx2, 0, cz2);
+                        mesh2.castShadow = true; mesh2.receiveShadow = true;
+                        mesh2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat));
+                        mesh2.userData = { z, x };
+                        terrainGroup.add(mesh2);
+
+                        let I_flow = 0;
+                        if (isHorizontal) {
+                            if (isConnected(z, x, z, x+1)) I_flow = getCurrent(z, x, z, x+1);
+                            else if (isConnected(z, x, z, x-1)) I_flow = -getCurrent(z, x, z, x-1);
+                        } else {
+                            if (isConnected(z, x, z+1, x)) I_flow = getCurrent(z, x, z+1, x);
+                            else if (isConnected(z, x, z-1, x)) I_flow = -getCurrent(z, x, z-1, x);
+                        }
+                        const absI = Math.abs(I_flow);
+
+                        const waterW1 = isHorizontal ? len1 : 0.4;
+                        const waterD1 = isHorizontal ? 0.4 : len1;
+                        const tex1 = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const pWaterGeo1 = new THREE.PlaneGeometry(waterW1, waterD1).rotateX(-Math.PI/2);
+                        const wMesh1 = new THREE.Mesh(pWaterGeo1, new THREE.MeshBasicMaterial({ map: tex1, color: 0xffffff, transparent:true, opacity:0.9 }));
+                        wMesh1.position.set(cx1, h1 + 0.015, cz1);
+                        wMesh1.userData = { z, x };
+                        waterGroup.add(wMesh1);
+
+                        const waterW2 = isHorizontal ? len2 : 0.4;
+                        const waterD2 = isHorizontal ? 0.4 : len2;
+                        const tex2 = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const pWaterGeo2 = new THREE.PlaneGeometry(waterW2, waterD2).rotateX(-Math.PI/2);
+                        const wMesh2 = new THREE.Mesh(pWaterGeo2, new THREE.MeshBasicMaterial({ map: tex2, color: 0xffffff, transparent:true, opacity:0.9 }));
+                        wMesh2.position.set(cx2, h2 + 0.015, cz2);
+                        wMesh2.userData = { z, x };
+                        waterGroup.add(wMesh2);
+
+                        animatables.push(delta => {
+                            if (isHorizontal) {
+                                tex1.offset.x -= I_flow * delta * 0.8;
+                                tex2.offset.x -= I_flow * delta * 0.8;
+                            } else {
+                                tex1.offset.y += I_flow * delta * 0.8;
+                                tex2.offset.y += I_flow * delta * 0.8;
+                            }
+                        });
+
+                        const dropDiff = Math.abs(h1 - h2);
+                        let wheelY = h1, wheelX = x, wheelZ = z;
+
+                        if (dropDiff > 0.1) {
+                            const dropTex = globalTexZ.clone(); dropTex.repeat.set(1, dropDiff * 1.5);
+                            const drop = new THREE.Mesh(
+                                new THREE.PlaneGeometry(0.4, dropDiff).translate(0, -dropDiff/2, 0),
+                                new THREE.MeshBasicMaterial({ map: dropTex, color: 0xffffff, transparent:true, opacity:0.9 })
+                            );
+
+                            drop.position.set(x, highH + 0.015, z); 
+                            
+                            const zFightOffset = 0.005;
+                            if (isHorizontal) {
+                                if (isH1High) { drop.rotation.y = Math.PI/2; drop.position.x += zFightOffset; }
+                                else { drop.rotation.y = -Math.PI/2; drop.position.x -= zFightOffset; }
+                            } else {
+                                if (isH1High) { drop.rotation.y = 0; drop.position.z += zFightOffset; }
+                                else { drop.rotation.y = Math.PI; drop.position.z -= zFightOffset; }
+                            }
+                            drop.userData = { z, x };
+                            waterGroup.add(drop);
+                            animatables.push(delta => dropTex.offset.y += absI * delta * 2.5);
+
+                            wheelY = Math.max(Math.min(h1, h2) + 0.25, highH - dropDiff / 2);
+                            if (isHorizontal) wheelX = x + (isH1High ? 0.2 : -0.2);
+                            else wheelZ = z + (isH1High ? 0.2 : -0.2);
+                        } else {
+                            wheelY = highH + 0.2;
+                        }
+                        
+                        const bGroup = new THREE.Group(); 
+                        bGroup.position.set(wheelX, wheelY, wheelZ); 
+                        terrainGroup.add(bGroup);
+                        
+                        const wheelGroup = new THREE.Group();
+                        const axisMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8), axisMat);
+                        axisMesh.userData = { z, x };
+                        wheelGroup.add(axisMesh);
+
+                        for(let i=0; i<4; i++) {
+                            const paddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.38), paddleMat);
+                            paddle.rotation.y = (Math.PI / 4) * i;
+                            paddle.castShadow = true;
+                            paddle.userData = { z, x };
+                            wheelGroup.add(paddle);
+                        }
+
+                        if (isHorizontal) wheelGroup.rotation.x = Math.PI / 2; 
+                        else wheelGroup.rotation.z = Math.PI / 2; 
+                        bGroup.add(wheelGroup);
+
+                        const bMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 });
+                        bMat.isDynamicBulb = true;
+                        const bSphere = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), bMat);
+                        
+                        bSphere.position.y = 0.35; 
+                        bSphere.userData = { z, x };
+                        bGroup.add(bSphere);
+                        
+                        const pLight = new THREE.PointLight(0xffff00, 0, 4); 
+                        pLight.position.y = 0.35; 
+                        bGroup.add(pLight);
+
+                        animatables.push(delta => {
+                            const sign = isHorizontal ? 1 : -1; 
+                            wheelGroup.rotateY(sign * I_flow * delta * 6.66); 
+                            
+                            const brightness = Math.abs(I_flow);
+                            if (brightness < 1e-4) {
+                                bMat.color.setHex(0x475569);
+                                bMat.emissive.setHex(0x000000);
+                                pLight.intensity = 0;
+                            } else {
+                                bMat.color.setHex(0xffff00);
+                                bMat.emissive.setHex(0xffff00);
+                                bMat.emissiveIntensity = Math.min(40, brightness * 2.5);     
+                                pLight.intensity = Math.min(80, brightness * 4.0);
+                            }
+                        });
+                        continue; 
+                    }
+
+                    if (cell.t === 4) {
+                        const isHorizontal = (cell.r % 2 === 0);
+                        let v1 = v, v2 = v; 
+                        
+                        if (isHorizontal) {
+                            v1 = getBoundaryHeight(z, x, z, x-1); 
+                            v2 = getBoundaryHeight(z, x, z, x+1); 
+                        } else {
+                            v1 = getBoundaryHeight(z, x, z-1, x); 
+                            v2 = getBoundaryHeight(z, x, z+1, x); 
+                        }
+
+                        let h1 = toH(v1);
+                        let h2 = toH(v2);
+
+                        const geo = new THREE.BoxGeometry(1, 1, 1);
+                        const pos = geo.attributes.position;
+                        for(let i=0; i<pos.count; i++){
+                            let vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
+                            if (vy < 0) { 
+                                pos.setY(i, 0); 
+                            } else {
+                                if (isHorizontal) {
+                                    pos.setY(i, vx < 0 ? h1 : h2);
+                                } else {
+                                    pos.setY(i, vz < 0 ? h1 : h2);
+                                }
+                            }
+                        }
+                        geo.computeVertexNormals();
+                        const mesh = new THREE.Mesh(geo, activeMat);
+                        mesh.position.set(x, 0, z);
+                        mesh.castShadow = true; mesh.receiveShadow = true;
+                        mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
+                        mesh.userData = { z, x };
+                        terrainGroup.add(mesh);
+
+                        let I_flow = 0;
+                        if (isHorizontal) {
+                            if (isConnected(z, x, z, x+1)) I_flow = getCurrent(z, x, z, x+1);
+                            else if (isConnected(z, x, z, x-1)) I_flow = -getCurrent(z, x, z, x-1);
+                        } else {
+                            if (isConnected(z, x, z+1, x)) I_flow = getCurrent(z, x, z+1, x);
+                            else if (isConnected(z, x, z-1, x)) I_flow = -getCurrent(z, x, z-1, x);
+                        }
+
+                        const waterW = isHorizontal ? 1.0 : 0.4;
+                        const waterD = isHorizontal ? 0.4 : 1.0;
+                        const tex = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const wGeo = new THREE.PlaneGeometry(waterW, waterD, Math.round(waterW*5), Math.round(waterD*5));
+                        wGeo.rotateX(-Math.PI/2);
+                        const wPos = wGeo.attributes.position;
+                        for(let i=0; i<wPos.count; i++) {
+                            let vx = wPos.getX(i), vz = wPos.getZ(i);
+                            let vy = 0;
+                            if (isHorizontal) {
+                                let t = vx + 0.5; 
+                                vy = h1 * (1 - t) + h2 * t;
+                            } else {
+                                let t = vz + 0.5; 
+                                vy = h1 * (1 - t) + h2 * t;
+                            }
+                            wPos.setY(i, vy + 0.015);
+                        }
+                        wGeo.computeVertexNormals();
+                        const wMesh = new THREE.Mesh(wGeo, new THREE.MeshBasicMaterial({ map: tex, color: 0xffffff, transparent:true, opacity:0.85 }));
+                        wMesh.position.set(x, 0, z);
+                        wMesh.userData = { z, x };
+                        waterGroup.add(wMesh);
+
+                        animatables.push(delta => {
+                            if (isHorizontal) tex.offset.x -= I_flow * delta * 0.5;
+                            else tex.offset.y += I_flow * delta * 0.5;
+                        });
+
+                        const baffleCount = 4; 
+                        const baffleMat = new THREE.MeshStandardMaterial({ color: isShortCircuit ? 0xef4444 : 0xea580c, roughness: 0.4, metalness: 0.2 });
+                        
+                        for(let i=1; i<=baffleCount; i++) {
+                            const flowPos = i / (baffleCount + 1); 
+                            const side = (i % 2 === 0) ? 1 : -1; 
+                            const crossOffset = side * 0.06; 
+                            
+                            let ox, oz, oy;
+                            let bWidth, bDepth;
+
+                            if (isHorizontal) {
+                                ox = x - 0.5 + flowPos;
+                                oz = z + crossOffset;
+                                oy = h1 * (1 - flowPos) + h2 * flowPos;
+                                bWidth = 0.08;
+                                bDepth = 0.28; 
+                            } else {
+                                ox = x + crossOffset;
+                                oz = z - 0.5 + flowPos;
+                                oy = h1 * (1 - flowPos) + h2 * flowPos;
+                                bWidth = 0.28;
+                                bDepth = 0.08;
+                            }
+                            
+                            const bGeo = new THREE.BoxGeometry(bWidth, 0.12, bDepth).translate(0, 0.06, 0);
+                            const bMesh = new THREE.Mesh(bGeo, baffleMat);
+                            
+                            bMesh.position.set(ox, oy, oz);
+                            bMesh.castShadow = true; bMesh.receiveShadow = true;
+                            bMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(bGeo), edgeMat));
+                            terrainGroup.add(bMesh);
+                        }
+                        continue;
+                    }
+
+                    const boxGeo = new THREE.BoxGeometry(1, h, 1).translate(0, h/2, 0);
+                    const block = new THREE.Mesh(boxGeo, activeMat);
+                    block.position.set(x, 0, z);
+                    block.castShadow = true; block.receiveShadow = true;
+                    block.add(new THREE.LineSegments(new THREE.EdgesGeometry(boxGeo), edgeMat));
+                    block.userData = { z, x };
+                    terrainGroup.add(block);
+
+                    const ports = getPorts(cell.t, cell.r);
+                    const waterH = h + 0.015;
+                    
+                    if(ports.includes(1)) {
+                        const centerMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.4), new THREE.MeshBasicMaterial({ color: isShortCircuit ? 0xef4444 : 0x0ea5e9 }));
+                        centerMesh.rotation.x = -Math.PI/2; centerMesh.position.set(x, waterH, z);
+                        centerMesh.userData = { z, x };
+                        waterGroup.add(centerMesh);
+                    }
+
+                    const processEdge = (dirIdx, nz, nx, isZ, isPosDir) => {
+                        if (!ports[dirIdx]) return;
+                        
+                        if (isConnected(z, x, nz, nx)) {
+                            const edgeId = Math.min(z*COLS+x, nz*COLS+nx) + "-" + Math.max(z*COLS+x, nz*COLS+nx);
+                            if (processedEdges.has(edgeId)) return;
+                            processedEdges.add(edgeId);
+
+                            const nCell = grid[nz][nx];
+                            const edgeWaterH = toH(getBoundaryHeight(z, x, nz, nx)) + 0.015;
+
+                            if (nCell.t === 4 || nCell.t === 5 || nCell.t === 6 || cell.t === 4 || cell.t === 5 || cell.t === 6) {
+                                const tex = (isZ ? globalTexZ : globalTexX).clone();
+                                const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.5, isZ ? 0.5 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
+                                mesh.rotation.x = -Math.PI/2;
+                                
+                                const px = isZ ? x : x + (isPosDir ? 0.25 : -0.25);
+                                const pz = isZ ? z + (isPosDir ? 0.25 : -0.25) : z;
+                                mesh.position.set(px, edgeWaterH, pz);
+                                mesh.userData = { z, x }; 
+                                waterGroup.add(mesh);
+                                
+                                const I = getCurrent(z, x, nz, nx);
+                                animatables.push(delta => {
+                                    const dir = (I > 0) ? (isZ ? (nz>z?1:-1) : (nx>x?1:-1)) : (isZ ? (nz>z?-1:1) : (nx>x?-1:1));
+                                    if(isZ) tex.offset.y += dir * Math.abs(I) * delta * (isShortCircuit ? 15.0 : 2.0); 
+                                    else tex.offset.x -= dir * Math.abs(I) * delta * (isShortCircuit ? 15.0 : 2.0);
+                                });
+                                return;
+                            }
+
+                            const I = getCurrent(z, x, nz, nx);
+                            const absI = Math.abs(I);
+                            let nh = toH(nodeV[nz][nx]);
+                            
+                            if (Math.abs(h - nh) < 0.05) {
+                                const tex = (isZ ? globalTexZ : globalTexX).clone();
+                                const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.6, isZ ? 0.6 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
+                                mesh.rotation.x = -Math.PI/2;
+                                mesh.position.set(isZ ? x : x + (isPosDir ? 0.5 : -0.5), Math.max(h, nh) + 0.015, isZ ? z + (isPosDir ? 0.5 : -0.5) : z);
+                                mesh.userData = { z, x };
+                                waterGroup.add(mesh);
+
+                                animatables.push(delta => {
+                                    const dir = (I > 0) ? (isZ ? (nz>z?1:-1) : (nx>x?1:-1)) : (isZ ? (nz>z?-1:1) : (nx>x?-1:1));
+                                    if(isZ) tex.offset.y += dir * absI * delta * (isShortCircuit ? 15.0 : 2.0); 
+                                    else tex.offset.x -= dir * absI * delta * (isShortCircuit ? 15.0 : 2.0);
+                                });
+                            }
+                        } else {
+                            const myEdgeH = toH(getEdgeHeight(z, x, dirIdx));
+                            const tex = (isZ ? globalTexZ : globalTexX).clone();
+                            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.3, isZ ? 0.3 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
+                            mesh.rotation.x = -Math.PI/2;
+                            mesh.position.set(isZ ? x : x + (isPosDir ? 0.35 : -0.35), Math.max(0.1, myEdgeH) + 0.015, isZ ? z + (isPosDir ? 0.35 : -0.35) : z);
+                            mesh.userData = { z, x };
+                            waterGroup.add(mesh);
+                        }
+                    };
+
+                    processEdge(0, z-1, x, true, false); 
+                    processEdge(1, z, x+1, false, true); 
+                    processEdge(2, z+1, x, true, true);  
+                    processEdge(3, z, x-1, false, false);
+                }
+            }
+        }
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            
+            const objectsToIntersect = [...terrainGroup.children, ...waterGroup.children];
+            const intersects = raycaster.intersectObjects(objectsToIntersect, true);
+            
+            let found = false;
+            for (let i = 0; i < intersects.length; i++) {
+                const obj = intersects[i].object;
+                if (obj.userData && obj.userData.z !== undefined) {
+                    const z = obj.userData.z;
+                    const x = obj.userData.x;
+                    const cell = grid[z][x];
+                    
+                    if (cell.t !== 0) {
+                        let maxI = 0;
+                        const ports = getPorts(cell.t, cell.r);
+                        const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+                        for(let d=0; d<4; d++) {
+                            if(ports[d]) {
+                                const nz = z + dirs[d][0], nx = x + dirs[d][1];
+                                if(isConnected(z, x, nz, nx)) {
+                                    const cVal = Math.abs(getCurrent(z, x, nz, nx));
+                                    if(cVal > maxI) maxI = cVal;
+                                }
+                            }
+                        }
+                        if(maxI < 1e-4) maxI = 0;
+                        let vDisplay = nodeV[z][x];
+                        if(Math.abs(vDisplay) < 0.05) vDisplay = 0;
+
+                        const typeName = [i18n[lang].tEmpty, i18n[lang].tWire, i18n[lang].tCorner, i18n[lang].tTjunc, i18n[lang].tRes, i18n[lang].tBulb, i18n[lang].tBatt][cell.t];
+                        
+                        tooltip.innerHTML = `<div style="color:#22d3ee; font-weight:bold; margin-bottom:4px; border-bottom:1px solid #334155; padding-bottom:2px;">${typeName}</div>${i18n[lang].tooltipV}: ${vDisplay.toFixed(2)} V<br>${i18n[lang].tooltipI}: ${maxI.toFixed(2)} A`;
+                        tooltip.style.left = (e.clientX + 15) + 'px';
+                        tooltip.style.top = (e.clientY + 15) + 'px';
+                        tooltip.style.display = 'block';
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) tooltip.style.display = 'none';
+        });
+
+        renderer.domElement.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+
+        const colSlider = document.getElementById('slider-cols');
+        const colInput = document.getElementById('input-cols');
+        const rowSlider = document.getElementById('slider-rows');
+        const rowInput = document.getElementById('input-rows');
+        
+        function handleResizeGrid(newC, newR) {
+            newC = Math.max(3, Math.min(10, newC));
+            newR = Math.max(3, Math.min(10, newR));
+            
+            if (newC === COLS && newR === ROWS) return; 
+            
+            let newGrid = Array(newR).fill(0).map(()=>Array(newC).fill(0).map(()=>({t:0, r:0, v:3.0})));
+            for(let z=0; z<Math.min(ROWS, newR); z++) {
+                for(let x=0; x<Math.min(COLS, newC); x++) {
+                    newGrid[z][x] = { ...grid[z][x] };
+                }
+            }
+            grid = newGrid;
+            nodeV = Array(newR).fill(0).map(()=>Array(newC).fill(0));
+            ROWS = newR;
+            COLS = newC;
+            
+            if(selectedCell && (selectedCell.z >= ROWS || selectedCell.x >= COLS)) {
+                selectedCell = null;
+                updateInspector();
+            }
+            
+            colSlider.value = COLS; colInput.value = COLS;
+            rowSlider.value = ROWS; rowInput.value = ROWS;
+            document.getElementById('blueprint-title').textContent = `${i18n[lang].bp} (${COLS}x${ROWS})`;
+            
+            window.dispatchEvent(new Event('resize')); 
+            
+            applyPhysics();
+        }
+        
+        colSlider.addEventListener('input', e => { colInput.value = e.target.value; handleResizeGrid(parseInt(e.target.value), ROWS); });
+        colInput.addEventListener('change', e => { colSlider.value = e.target.value; handleResizeGrid(parseInt(e.target.value), ROWS); });
+        rowSlider.addEventListener('input', e => { rowInput.value = e.target.value; handleResizeGrid(COLS, parseInt(e.target.value)); });
+        rowInput.addEventListener('change', e => { rowSlider.value = e.target.value; handleResizeGrid(COLS, parseInt(e.target.value)); });
+
+        function updateInspector() {
+            const insp = document.getElementById('inspector-content');
+            if (!selectedCell) {
+                insp.innerHTML = `<span id="ui-select-tip" class="text-slate-500 text-[10px] text-center w-full block">${i18n[lang].selectTip}</span>`;
+                return;
+            }
+            const item = grid[selectedCell.z][selectedCell.x];
+            
+            let title = "", minV = 0, maxV = 15, unit = "Ω";
+            if (item.t === 6) { title = i18n[lang].pVolts; unit = "V"; minV = 1; }
+            else if (item.t === 4) { title = i18n[lang].pRes; }
+            else if (item.t === 5) { title = i18n[lang].pBulb; }
+            
+            if (item.t === 6 || item.t === 4 || item.t === 5) {
+                insp.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-semibold text-slate-300">${title}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="range" id="prop-slider" min="${minV}" max="${maxV}" step="0.1" value="${item.v}" class="flex-1">
+                        <div class="relative flex items-center">
+                            <input type="number" id="prop-input" min="${minV}" max="${maxV}" step="0.1" value="${item.v}" class="pr-3">
+                            <span class="absolute right-1 text-[9px] text-slate-400 font-bold pointer-events-none">${unit}</span>
+                        </div>
+                    </div>
+                `;
+                
+                const slider = document.getElementById('prop-slider');
+                const numInput = document.getElementById('prop-input');
+                
+                const syncValues = (val) => {
+                    let v = parseFloat(val);
+                    if(isNaN(v)) v = minV;
+                    grid[selectedCell.z][selectedCell.x].v = v;
+                    solvePhysics(); build3D(); 
+                    render2DUI(); 
+                };
+
+                slider.addEventListener('input', (e) => {
+                    numInput.value = e.target.value;
+                    syncValues(e.target.value);
+                });
+                
+                numInput.addEventListener('input', (e) => {
+                    slider.value = e.target.value;
+                    syncValues(e.target.value);
+                });
+            } else {
+                let name = [i18n[lang].tEmpty, i18n[lang].tWire, i18n[lang].tCorner, i18n[lang].tTjunc, "", i18n[lang].tBulb][item.t];
+                insp.innerHTML = `<span class="text-slate-400 text-[10px] text-center w-full block">[${name}] - ${i18n[lang].noProp}</span>`;
+            }
+        }
+
+        function render2DUI() {
+            const cont = document.getElementById('grid-container');
+            cont.innerHTML = '';
+            for(let z=0; z<ROWS; z++) {
+                const row = document.createElement('div');
+                row.className = 'grid-row';
+                for(let x=0; x<COLS; x++) {
+                    const cell = document.createElement('div');
+                    const item = grid[z][x];
+                    
+                    cell.className = 'grid-cell'; 
+                    if (selectedCell && selectedCell.z === z && selectedCell.x === x) {
+                        cell.classList.add('selected-cell');
+                    }
+                    
+                    if(item.t !== 0) {
+                        const ports = getPorts(item.t, item.r);
+                        
+                        let maxI = 0;
+                        const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+                        for(let d=0; d<4; d++) {
+                            if(ports[d]) {
+                                const nz = z + dirs[d][0];
+                                const nx = x + dirs[d][1];
+                                if(isConnected(z, x, nz, nx)) {
+                                    const currentVal = Math.abs(getCurrent(z, x, nz, nx));
+                                    if(currentVal > maxI) maxI = currentVal;
+                                }
+                            }
+                        }
+                        if (maxI < 1e-4) maxI = 0;
+
+                        if(ports[0]) { const d=document.createElement('div'); d.className='port-line port-T'; cell.appendChild(d); }
+                        if(ports[1]) { const d=document.createElement('div'); d.className='port-line port-R'; cell.appendChild(d); }
+                        if(ports[2]) { const d=document.createElement('div'); d.className='port-line port-B'; cell.appendChild(d); }
+                        if(ports[3]) { const d=document.createElement('div'); d.className='port-line port-L'; cell.appendChild(d); }
+                        if(item.t!==6) { const d=document.createElement('div'); d.className='port-line port-C'; cell.appendChild(d); }
+                        
+                        if(item.t===4) { 
+                            const d=document.createElement('div'); 
+                            d.className='c-res'; 
+                            d.innerText = `${item.v}Ω`;
+                            cell.appendChild(d); 
+                        }
+                        if(item.t===5) { 
+                            const d=document.createElement('div'); 
+                            d.className='c-bulb'; 
+                            if (maxI === 0) {
+                                d.style.background = '#475569'; 
+                                d.style.boxShadow = 'none';
+                            } else {
+                                const alpha = Math.min(1, 0.4 + maxI * 0.3); 
+                                const blur = Math.min(20, 5 + maxI * 10); 
+                                d.style.background = `rgba(234, 179, 8, ${alpha})`;
+                                d.style.boxShadow = `0 0 ${blur}px rgba(234, 179, 8, ${alpha})`;
+                            }
+                            cell.appendChild(d); 
+                        }
+                        if(item.t===6) { 
+                            const d=document.createElement('div'); 
+                            d.className='c-batt'; 
+                            d.style.transform = `rotate(${item.r * 90}deg)`;
+                            d.innerHTML = `<span class="text-white bg-black px-[2px] rounded-sm text-[7px]">-</span><span class="text-white text-[8px] font-bold">${item.v}V</span><span class="text-white bg-red-500 px-[2px] rounded-sm text-[7px]">+</span>`;
+                            cell.appendChild(d); 
+                        }
+
+                        if (item.t !== 6 && item.t !== 4) {
+                            const vLabel = document.createElement('span');
+                            vLabel.className = 'v-label';
+                            let displayV = nodeV[z][x];
+                            if(Math.abs(displayV) < 0.05) displayV = 0; 
+                            vLabel.innerText = displayV.toFixed(1);
+                            cell.appendChild(vLabel);
+                        }
+
+                        const iLabel = document.createElement('span');
+                        iLabel.className = 'i-label';
+                        iLabel.innerText = maxI.toFixed(2) + 'A';
+                        cell.appendChild(iLabel);
+                    }
+
+                    cell.addEventListener('contextmenu', e => e.preventDefault());
+                    
+                    cell.addEventListener('pointerdown', (e) => {
+                        if (e.button === 2 || selectedTool === -1) {
+                            selectedCell = {z, x};
+                            render2DUI(); 
+                            updateInspector();
+                            return;
+                        }
+                        
+                        if (e.button === 0 || e.pointerType === 'touch') {
+                            selectedCell = {z, x}; 
+                            if (item.t === selectedTool && selectedTool !== 0) {
+                                grid[z][x].r = (grid[z][x].r + 1) % 4; 
+                            } else {
+                                let defaultV = (selectedTool === 6) ? 9.0 : ((selectedTool === 4) ? 4.0 : ((selectedTool === 5) ? 5.0 : 3.0));
+                                grid[z][x] = { t: selectedTool, r: 0, v: defaultV };
+                            }
+                            applyPhysics(); 
+                        }
+                    });
+                    row.appendChild(cell);
+                }
+                cont.appendChild(row);
+            }
+        }
+
+        function applyPhysics() {
+            solvePhysics(); 
+            build3D(); 
+            render2DUI();
+            updateInspector();
+        }
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedTool = parseInt(btn.dataset.tool);
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            let w = container.clientWidth || window.innerWidth;
+            let h = container.clientHeight || window.innerHeight;
+            if(w===0 || h===0) return;
+            const aspect = w/h;
+            
+            viewSize = Math.max(COLS, ROWS) * 0.7 + 2; 
+            
+            camera.left = -viewSize * aspect; camera.right = viewSize * aspect;
+            camera.top = viewSize; camera.bottom = -viewSize;
+            camera.updateProjectionMatrix(); renderer.setSize(w, h);
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            const delta = clock.getDelta();
+            animatables.forEach(fn => fn(delta)); 
+            renderer.render(scene, camera);
+        }
+
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+
+        applyLanguage();
+        animate();
+    </script>
+</body>
+</html>
