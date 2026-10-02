@@ -141,19 +141,65 @@
 
             <h2 id="ui-tools-title" class="text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-widest">도구 및 부품 (Tools)</h2>
             <div id="tut-target-tools" class="grid grid-cols-4 gap-2 mb-4 p-2 rounded-xl">
-                <div class="tool-btn" data-tool="-1"><svg class="w-5 h-5 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg><span id="t-select" class="text-[9px] font-bold text-slate-300">선택</span></div>
-                <div class="tool-btn active" data-tool="1"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-wire" class="text-[9px] font-bold text-slate-300 mt-1">일자전선</span></div>
-                <div class="tool-btn" data-tool="2"><div class="w-5 h-5 relative"><div class="port-B"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-corner" class="text-[9px] font-bold text-slate-300 mt-1">코너전선</span></div>
-                <div class="tool-btn" data-tool="3"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-B"></div><div class="port-C"></div></div><span id="t-tjunc" class="text-[9px] font-bold text-slate-300 mt-1">T자전선</span></div>
-                <div class="tool-btn" data-tool="4"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-res border border-orange-300" style="font-size:8px;">R</div></div><span id="t-res" class="text-[9px] font-bold text-slate-300 mt-1">저항</span></div>
-                <div class="tool-btn" data-tool="5"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-bulb"></div></div><span id="t-bulb" class="text-[9px] font-bold text-slate-300 mt-1">전구</span></div>
-                <div class="tool-btn" data-tool="0"><div class="w-5 h-5 rounded border border-slate-600 border-dashed"></div><span id="t-erase" class="text-[9px] font-bold text-slate-300 mt-1">지우개</span></div>
-                <div class="tool-btn" data-tool="6">
-                    <div class="w-full h-4 relative flex items-center justify-center">
-                        <div class="port-L"></div><div class="port-R"></div>
-                        <div class="w-8 h-4 bg-slate-800 border border-slate-600 rounded flex items-center justify-between px-[1px] z-10"><span class="text-white text-[6px] bg-black px-[1px] rounded">-</span><span class="text-white text-[6px] bg-red-500 px-[1px] rounded">+</span></div>
+                <div class="tool-btn" data-tool="-1">
+                    <svg class="w-5 h-5 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                    <span id="t-select" class="text-[9px] font-bold text-slate-300">선택</span>
+                </div>
+                
+                <div class="tool-btn active" data-tool="1">
+                    <div class="w-6 h-6 relative mb-1">
+                        <div class="w-full h-1.5 bg-sky-500 absolute top-1/2 -translate-y-1/2"></div>
                     </div>
-                    <span id="t-batt" class="text-[9px] font-bold text-slate-300 mt-1">배터리</span>
+                    <span id="t-wire" class="text-[9px] font-bold text-slate-300">일자전선</span>
+                </div>
+                
+                <div class="tool-btn" data-tool="2">
+                    <div class="w-6 h-6 relative mb-1">
+                        <div class="w-1/2 h-1.5 bg-sky-500 absolute right-0 top-1/2 -translate-y-1/2"></div>
+                        <div class="w-1.5 h-1/2 bg-sky-500 absolute bottom-0 left-1/2 -translate-x-1/2"></div>
+                        <div class="w-1.5 h-1.5 bg-sky-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                    </div>
+                    <span id="t-corner" class="text-[9px] font-bold text-slate-300">코너전선</span>
+                </div>
+                
+                <div class="tool-btn" data-tool="3">
+                    <div class="w-6 h-6 relative mb-1">
+                        <div class="w-full h-1.5 bg-sky-500 absolute top-1/2 -translate-y-1/2"></div>
+                        <div class="w-1.5 h-1/2 bg-sky-500 absolute bottom-0 left-1/2 -translate-x-1/2"></div>
+                    </div>
+                    <span id="t-tjunc" class="text-[9px] font-bold text-slate-300">T자전선</span>
+                </div>
+                
+                <div class="tool-btn" data-tool="4">
+                    <div class="w-6 h-6 relative mb-1">
+                        <div class="w-full h-1 bg-sky-500 absolute top-1/2 -translate-y-1/2"></div>
+                        <div class="c-res border border-orange-300" style="font-size:8px;">R</div>
+                    </div>
+                    <span id="t-res" class="text-[9px] font-bold text-slate-300">저항</span>
+                </div>
+                
+                <div class="tool-btn" data-tool="5">
+                    <div class="w-6 h-6 relative mb-1">
+                        <div class="w-full h-1 bg-sky-500 absolute top-1/2 -translate-y-1/2"></div>
+                        <div class="c-bulb"></div>
+                    </div>
+                    <span id="t-bulb" class="text-[9px] font-bold text-slate-300">전구</span>
+                </div>
+                
+                <div class="tool-btn" data-tool="0">
+                    <div class="w-5 h-5 rounded border border-slate-600 border-dashed mb-1"></div>
+                    <span id="t-erase" class="text-[9px] font-bold text-slate-300">지우개</span>
+                </div>
+                
+                <div class="tool-btn" data-tool="6">
+                    <div class="w-8 h-5 relative flex items-center justify-center mb-1">
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-sky-500"></div>
+                        <div class="w-8 h-4 bg-slate-800 border border-slate-600 rounded flex items-center justify-between px-[1px] z-10">
+                            <span class="text-white text-[6px] bg-black px-[1px] rounded">-</span>
+                            <span class="text-white text-[6px] bg-red-500 px-[1px] rounded">+</span>
+                        </div>
+                    </div>
+                    <span id="t-batt" class="text-[9px] font-bold text-slate-300">배터리</span>
                 </div>
             </div>
 
@@ -220,7 +266,7 @@
                 statusCopy: "✔️ 코드를 복사하여 언제든 회로를 공유할 수 있습니다.",
                 statusLoad: "✔️ 코드를 성공적으로 불러왔습니다!",
                 statusFail: "⚠️ 전류 0A (단선): 전원 연결이 끊겨 있습니다.",
-                statusShort: "🔥 단락(합선) 위험: 저항 없이 무한 전류가 흘러 회로가 과열되었습니다!",
+                statusShort: "🔥 단락(합선) 위험: 저항 없이 과도한 전류가 흘러 회로가 과열되었습니다!",
                 invalidCode: "잘못된 회로 코드입니다. 텍스트를 다시 확인해주세요.",
                 tooltipV: "노드 전압(V)", tooltipI: "통과 전류(I)", floorI: "전체 전류",
                 tEmpty: "빈 공간",
@@ -264,7 +310,7 @@
                 bp: "Blueprint",
                 pVolts: "Battery Voltage (V)", pRes: "Resistance (R)", pBulb: "Bulb Resistance (R)",
                 noProp: "No additional properties available.",
-                statusCopy: "✔️ Code ready to share your circuit.",
+                statusCopy: "✔️️ Code ready to share your circuit.",
                 statusLoad: "✔️ Circuit loaded successfully!",
                 statusFail: "⚠️ 0A (Open Circuit): The circuit is disconnected.",
                 statusShort: "🔥 Short Circuit Risk: Infinite current without resistance has overheated the circuit!",
@@ -300,7 +346,7 @@
         let isTutorialActive = false;
         let isDataOverlayOn = false; 
         
-        let isUniformCurrent = true; // ★ 모든 물의 속력이 동일한지 체크
+        let isUniformCurrent = true; 
 
         function applyLanguage() {
             document.getElementById('ui-subtitle').innerHTML = i18n[lang].subtitle;
@@ -586,13 +632,11 @@
             for(let i=0; i<N; i++) A_mat[i][i] = 1e-10;
 
             let batteryFound = false;
-            let hasResistorOrBulb = false; 
 
             for (let z=0; z<ROWS; z++) {
                 for (let x=0; x<COLS; x++) {
                     const c1 = grid[z][x];
                     if (c1.t === 0) continue;
-                    if (c1.t === 4 || c1.t === 5) hasResistorOrBulb = true;
                     
                     const idx1 = z * COLS + x;
 
@@ -685,7 +729,8 @@
             
             isUniformCurrent = isCircuitFlowing && ((maxCurrent - minFlowingCurrent) < 0.05);
 
-            isShortCircuit = batteryFound && !hasResistorOrBulb && (maxCurrent > 50.0) && isCircuitFlowing;
+            // ★ 단락 판정 개선: 전선 저항이 1e-5라 실제 합선시 전류가 수만A까지 폭증하므로 1000A 초과 시 무조건 합선 판정 ★
+            isShortCircuit = batteryFound && (maxCurrent > 1000.0) && isCircuitFlowing;
 
             const st = document.getElementById('status-box');
             if (isShortCircuit) {
@@ -733,7 +778,7 @@
         }
 
         // ==========================================
-        // 4. 3D 렌더링 코어
+        // 4. 3D 렌더링 코어 (그림자 제거 적용)
         // ==========================================
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -748,8 +793,9 @@
         
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(w, h);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
+        // ★ 그림자 완전 비활성화 ★
+        renderer.shadowMap.enabled = false;
         container.appendChild(renderer.domElement);
 
         const domEl = renderer.domElement;
@@ -768,11 +814,10 @@
         }
         updateCameraTarget();
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.7));
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        // ★ 그림자가 없어진 대신 빛을 은은하고 밝게 조정 ★
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.85));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
         dirLight.position.set(-10, 25, 15); 
-        dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = 2048; dirLight.shadow.mapSize.height = 2048;
         scene.add(dirLight);
 
         const mCfg = { roughness: 0.8, metalness: 0.1 };
@@ -808,7 +853,7 @@
         const overlayGroup = new THREE.Group(); scene.add(overlayGroup); 
 
         const floor = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1).translate(0, -0.5, 0), new THREE.MeshStandardMaterial({ color: 0x334155 }));
-        floor.receiveShadow = true; terrainGroup.add(floor);
+        terrainGroup.add(floor);
 
         function disposeGroup(group) {
             const objects = [];
@@ -951,7 +996,7 @@
                 tCtx.fillText(isShortCircuit ? `OVERHEAT (SHORT CIRCUIT)` : `${i18n[lang].floorI}: ${lastMaxCurrent.toFixed(2)} A`, 256, 64);
                 
                 const tTex = new THREE.CanvasTexture(tCanvas);
-                const tGeo = new THREE.PlaneGeometry(4.8, 1.2).rotateX(-Math.PI/2);
+                const tGeo = new THREE.PlaneGeometry(4.8, 1.2).rotateX(-Math.PI/2); 
                 const tMat = new THREE.MeshBasicMaterial({ map: tTex, transparent: true, depthWrite: false });
                 tMat.isFloorText = true; 
                 const tMesh = new THREE.Mesh(tGeo, tMat);
@@ -1021,14 +1066,12 @@
                         const mGeo = new THREE.BoxGeometry(minusW, h_minus, minusD).translate(0, h_minus/2, 0);
                         const mMesh = new THREE.Mesh(mGeo, activeMat);
                         mMesh.position.set(x + negDir[1]*0.25, 0, z + negDir[0]*0.25);
-                        mMesh.castShadow = true; mMesh.receiveShadow = true;
                         mMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(mGeo), edgeMat));
                         terrainGroup.add(mMesh);
 
                         const pGeo = new THREE.BoxGeometry(minusW, h_plus, minusD).translate(0, h_plus/2, 0);
                         const pMesh = new THREE.Mesh(pGeo, activeMat);
                         pMesh.position.set(x + posDir[1]*0.25, 0, z + posDir[0]*0.25);
-                        pMesh.castShadow = true; pMesh.receiveShadow = true;
                         pMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(pGeo), edgeMat));
                         terrainGroup.add(pMesh);
 
@@ -1038,7 +1081,6 @@
                         const vPipeZ = z + negDir[0]*0.15;
                         const vPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, pipeH, 16).translate(0, pipeH/2, 0), matMetal);
                         vPipe.position.set(vPipeX, h_minus, vPipeZ);
-                        vPipe.castShadow = true;
                         terrainGroup.add(vPipe);
 
                         const dropX = x + posDir[1]*0.25;
@@ -1050,7 +1092,6 @@
                         const hPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, hPipeLen, 16), matMetal);
                         if (isHorizontal) hPipe.rotation.z = Math.PI / 2; else hPipe.rotation.x = Math.PI / 2;
                         hPipe.position.set(hPipeX, h_plus + 0.6 - 0.06, hPipeZ);
-                        hPipe.castShadow = true;
                         terrainGroup.add(hPipe);
 
                         const waterW = isHorizontal ? 0.5 : 0.4;
@@ -1115,8 +1156,14 @@
                             baseMatP.color.setHex(wColor); baseMatM.color.setHex(wColor); upBaseMat.color.setHex(wColor);
                             if(baseMatDrop) baseMatDrop.color.setHex(wColor);
                             
-                            pTex.offset.x -= currentI * delta * 2.0; pTex.offset.y -= currentI * delta * 2.0;
-                            mTex.offset.x -= currentI * delta * 2.0; mTex.offset.y -= currentI * delta * 2.0;
+                            if (isHorizontal) {
+                                pTex.offset.x -= currentI * delta * 2.0;
+                                mTex.offset.x -= currentI * delta * 2.0;
+                            } else {
+                                pTex.offset.y -= currentI * delta * 2.0;
+                                mTex.offset.y -= currentI * delta * 2.0;
+                            }
+
                             if(dropTex) dropTex.offset.y += absI * delta * (isShortCircuit ? 15.0 : 4.0);
                             upTex.offset.y -= absI * delta * 2.0;
                         });
@@ -1252,7 +1299,7 @@
                         continue; 
                     }
 
-                    if (cell.t === 4) { // 저항
+                    if (cell.t === 4) {
                         const isHorizontal = (cell.r % 2 === 0);
                         let v1 = isHorizontal ? getBoundaryHeight(z, x, z, x-1) : getBoundaryHeight(z, x, z-1, x);
                         let v2 = isHorizontal ? getBoundaryHeight(z, x, z, x+1) : getBoundaryHeight(z, x, z+1, x); 
@@ -1275,7 +1322,6 @@
                         geo.computeVertexNormals();
                         const mesh = new THREE.Mesh(geo, activeMat);
                         mesh.position.set(x, 0, z);
-                        mesh.castShadow = true; mesh.receiveShadow = true;
                         mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
                         terrainGroup.add(mesh);
 
@@ -1332,7 +1378,6 @@
                             const bGeo = new THREE.BoxGeometry(bWidth, 0.12, bDepth).translate(0, 0.06, 0);
                             const bMesh = new THREE.Mesh(bGeo, baffleMat);
                             bMesh.position.set(ox, oy, oz);
-                            bMesh.castShadow = true; bMesh.receiveShadow = true;
                             bMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(bGeo), edgeMat));
                             terrainGroup.add(bMesh);
                         }
@@ -1361,7 +1406,6 @@
                     const boxGeo = new THREE.BoxGeometry(1, h, 1).translate(0, h/2, 0);
                     const block = new THREE.Mesh(boxGeo, activeMat);
                     block.position.set(x, 0, z);
-                    block.castShadow = true; block.receiveShadow = true;
                     block.add(new THREE.LineSegments(new THREE.EdgesGeometry(boxGeo), edgeMat));
                     terrainGroup.add(block);
 
