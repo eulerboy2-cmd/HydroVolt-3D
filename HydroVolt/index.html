@@ -92,7 +92,7 @@
                 <button id="tut-skip" class="text-xs text-slate-400 hover:text-white transition-colors p-2">건너뛰기</button>
                 <button id="tut-next" class="text-xs bg-sky-500 hover:bg-sky-400 text-white px-5 py-2 rounded-lg font-bold shadow-lg transition-colors">다음 👉</button>
             </div>
-            <div class="absolute -top-3 -right-3 text-[10px] bg-sky-500 text-white font-bold px-2 py-1 rounded-full shadow" id="tut-step-badge">1/5</div>
+            <div class="absolute -top-3 -right-3 text-[10px] bg-sky-500 text-white font-bold px-2 py-1 rounded-full shadow" id="tut-step-badge">1/6</div>
         </div>
     </div>
 
@@ -101,6 +101,7 @@
             <div class="flex justify-between items-start mb-1">
                 <h1 class="text-2xl font-bold text-cyan-400">HydroVolt 3D</h1>
                 <div class="flex gap-2">
+                    <button id="btn-overlay" class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors border border-indigo-500 font-bold shadow">📊 데이터 뷰</button>
                     <button id="btn-tutorial" class="text-[10px] bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 rounded transition-colors border border-sky-500 font-bold shadow">❓ Help</button>
                     <button id="lang-toggle" class="text-[10px] bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded transition-colors border border-slate-600 font-bold shadow">🇺🇸 EN</button>
                 </div>
@@ -140,23 +141,19 @@
 
             <h2 id="ui-tools-title" class="text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-widest">도구 및 부품 (Tools)</h2>
             <div id="tut-target-tools" class="grid grid-cols-4 gap-2 mb-4 p-2 rounded-xl">
-                <div class="tool-btn" data-tool="-1">
-                    <svg class="w-6 h-6 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
-                    <span id="t-select" class="text-[10px] font-bold text-slate-300">선택</span>
-                </div>
-                <div class="tool-btn active" data-tool="1"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-wire" class="text-[10px] font-bold text-slate-300 mt-1">일자 전선</span></div>
-                <div class="tool-btn" data-tool="2"><div class="w-6 h-6 relative"><div class="port-B"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-corner" class="text-[10px] font-bold text-slate-300 mt-1">코너 전선</span></div>
-                <div class="tool-btn" data-tool="3"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-B"></div><div class="port-C"></div></div><span id="t-tjunc" class="text-[10px] font-bold text-slate-300 mt-1">T자 전선</span></div>
-                <div class="tool-btn" data-tool="4"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-res border border-orange-300">R</div></div><span id="t-res" class="text-[10px] font-bold text-slate-300 mt-1">저항</span></div>
-                <div class="tool-btn" data-tool="5"><div class="w-6 h-6 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-bulb"></div></div><span id="t-bulb" class="text-[10px] font-bold text-slate-300 mt-1">전구</span></div>
-                
-                <div class="tool-btn" data-tool="0"><div class="w-6 h-6 rounded border border-slate-600 border-dashed"></div><span id="t-erase" class="text-[10px] font-bold text-slate-300 mt-1">지우개</span></div>
-                <div class="tool-btn" data-tool="6" style="grid-column: span 1;">
-                    <div class="w-full h-5 relative flex items-center justify-center">
+                <div class="tool-btn" data-tool="-1"><svg class="w-5 h-5 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg><span id="t-select" class="text-[9px] font-bold text-slate-300">선택</span></div>
+                <div class="tool-btn active" data-tool="1"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-wire" class="text-[9px] font-bold text-slate-300 mt-1">일자전선</span></div>
+                <div class="tool-btn" data-tool="2"><div class="w-5 h-5 relative"><div class="port-B"></div><div class="port-R"></div><div class="port-C"></div></div><span id="t-corner" class="text-[9px] font-bold text-slate-300 mt-1">코너전선</span></div>
+                <div class="tool-btn" data-tool="3"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="port-B"></div><div class="port-C"></div></div><span id="t-tjunc" class="text-[9px] font-bold text-slate-300 mt-1">T자전선</span></div>
+                <div class="tool-btn" data-tool="4"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-res border border-orange-300" style="font-size:8px;">R</div></div><span id="t-res" class="text-[9px] font-bold text-slate-300 mt-1">저항</span></div>
+                <div class="tool-btn" data-tool="5"><div class="w-5 h-5 relative"><div class="port-L"></div><div class="port-R"></div><div class="c-bulb"></div></div><span id="t-bulb" class="text-[9px] font-bold text-slate-300 mt-1">전구</span></div>
+                <div class="tool-btn" data-tool="0"><div class="w-5 h-5 rounded border border-slate-600 border-dashed"></div><span id="t-erase" class="text-[9px] font-bold text-slate-300 mt-1">지우개</span></div>
+                <div class="tool-btn" data-tool="6">
+                    <div class="w-full h-4 relative flex items-center justify-center">
                         <div class="port-L"></div><div class="port-R"></div>
-                        <div class="w-10 h-5 bg-slate-800 border border-slate-600 rounded flex items-center justify-between px-[2px] z-10"><span class="text-white text-[8px] bg-black px-[2px] rounded">-</span><span class="text-white text-[8px] bg-red-500 px-[2px] rounded">+</span></div>
+                        <div class="w-8 h-4 bg-slate-800 border border-slate-600 rounded flex items-center justify-between px-[1px] z-10"><span class="text-white text-[6px] bg-black px-[1px] rounded">-</span><span class="text-white text-[6px] bg-red-500 px-[1px] rounded">+</span></div>
                     </div>
-                    <span id="t-batt" class="text-[10px] font-bold text-slate-300 mt-1">배터리</span>
+                    <span id="t-batt" class="text-[9px] font-bold text-slate-300 mt-1">배터리</span>
                 </div>
             </div>
 
@@ -190,7 +187,7 @@
 
         <div id="tut-target-canvas" class="transition-all w-full h-[45%] md:h-full flex-grow relative z-1">
             <div id="canvas-container" class="absolute inset-0"></div>
-            <div id="tooltip" style="display:none; position:absolute; background:rgba(15,23,42,0.95); border:1px solid #0ea5e9; padding:8px 12px; border-radius:6px; pointer-events:none; z-index:9999; color:white; font-family:monospace; font-size:11px; box-shadow:0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(4px);"></div>
+            <div id="tooltip" style="display:none; position:fixed; background:rgba(15,23,42,0.95); border:1px solid #0ea5e9; padding:8px 12px; border-radius:6px; pointer-events:none; z-index:9999; color:white; font-family:monospace; font-size:11px; box-shadow:0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(4px);"></div>
         </div>
     </div>
 
@@ -199,7 +196,7 @@
         import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
         // ==========================================
-        // 0. 다국어 (i18n) & 예제 회로 (1, 2, 5, 3, 4, 6 순서 및 이름 반영)
+        // 0. 다국어 (i18n) & 예제 회로
         // ==========================================
         const i18n = {
             ko: {
@@ -228,12 +225,14 @@
                 tooltipV: "노드 전압(V)", tooltipI: "통과 전류(I)", floorI: "전체 전류",
                 tEmpty: "빈 공간",
                 tutBtn: "❓ Help", tutSkip: "건너뛰기", tutNext: "다음 👉", tutFinish: "시작하기 🚀",
+                overlayBtn: "📊 데이터 뷰",
                 tutSteps: [
                     { id: null, text: "HydroVolt 3D에 오신 것을 환영합니다! 🎉\n\n전기의 움직임을 '물의 흐름'으로 직관적으로 관찰할 수 있는 시뮬레이터입니다." },
                     { id: 'tut-target-tools', text: "먼저 여기서 전선, 저항, 전구, 배터리 등 원하는 부품을 선택하세요.\n스마트폰에서는 '선택' 도구를 자주 활용하게 됩니다." },
                     { id: 'tut-target-grid', text: "이곳은 2D 설계도입니다.\n마우스 좌클릭(또는 터치)으로 빈 칸에 부품을 배치하고 회전시킬 수 있습니다." },
                     { id: 'tut-target-inspector', text: "설계도에 놓은 부품에 우클릭(또는 선택툴 탭)을 하면,\n이곳에서 전압이나 저항 수치를 마음대로 바꿀 수 있습니다." },
                     { id: 'tut-target-canvas', text: "설계도에 회로가 연결되면,\n이 3D 화면에서 물이 흐르는 높낮이(전압)와 수차(전구)가 도는 모습을 실시간으로 볼 수 있습니다!\n(마우스나 터치로 시점 변경 가능)" },
+                    { id: 'btn-overlay', text: "상단의 '데이터 뷰' 버튼을 누르면 3D 화면 위에 각 지점의 전압(V)과 전류(A)가 나타나며, 유속 차이에 따라 물의 색상이 파란색에서 붉은색으로 직관적으로 변합니다!" },
                     { id: 'tut-target-share', text: "마지막으로 완성된 회로 코드를 복사해서 친구들에게 공유해 보세요.\n\n자, 이제 나만의 회로를 만들어보세요!" }
                 ],
                 exTitle: "예제 회로 불러오기",
@@ -241,9 +240,9 @@
                 examples: [
                     { name: "1. 기본 직렬 회로", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFsxLDAsM10sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
                     { name: "2. 전구 2개 직렬", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDVdLFsxLDAsM10sWzUsMCw1XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
-                    { name: "3. 저항 직렬", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFs0LDAsOV0sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
-                    { name: "4. 저항 병렬", code: "eyJjIjo2LCJyIjo0LCJkIjpbWzAsMCwzXSxbMCwwLDNdLFsyLDEsM10sWzQsMCw5XSxbMiwyLDNdLFswLDAsM10sWzIsMSwzXSxbNSwwLDBdLFszLDMsM10sWzAsMCwzXSxbMywxLDNdLFsyLDIsM10sWzEsMSwzXSxbMCwwLDNdLFsyLDAsM10sWzQsMCw5XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
-                    { name: "5. 전구 2개 병렬", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzAsMCwzXSxbMiwxLDNdLFs1LDAsNV0sWzIsMiwzXSxbMCwwLDNdLFsyLDEsM10sWzMsMywzXSxbMCwwLDNdLFszLDEsM10sWzIsMiwzXSxbMSwxLDNdLFsyLDAsM10sWzUsMCw1XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" },
+                    { name: "3. 전구 2개 병렬", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzAsMCwzXSxbMiwxLDNdLFs1LDAsNV0sWzIsMiwzXSxbMCwwLDNdLFsyLDEsM10sWzMsMywzXSxbMCwwLDNdLFszLDEsM10sWzIsMiwzXSxbMSwxLDNdLFsyLDAsM10sWzUsMCw1XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" },
+                    { name: "4. 저항 직렬", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFs0LDAsOV0sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "5. 저항 병렬", code: "eyJjIjo2LCJyIjo0LCJkIjpbWzAsMCwzXSxbMCwwLDNdLFsyLDEsM10sWzQsMCw5XSxbMiwyLDNdLFswLDAsM10sWzIsMSwzXSxbNSwwLDBdLFszLDMsM10sWzAsMCwzXSxbMywxLDNdLFsyLDIsM10sWzEsMSwzXSxbMCwwLDNdLFsyLDAsM10sWzQsMCw5XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
                     { name: "6. 휘트스톤 브릿지", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzIsMSwzXSxbNCwwLDldLFszLDIsM10sWzQsMCwxOF0sWzIsMiwzXSxbMSwxLDNdLFswLDAsM10sWzUsMSw1XSxbMCwwLDNdLFsxLDEsM10sWzMsMSwzXSxbNCwwLDQuNV0sWzMsMCwzXSxbNCwwLDldLFszLDMsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" }
                 ]
             },
@@ -273,12 +272,14 @@
                 tooltipV: "Node Voltage (V)", tooltipI: "Pass Current (I)", floorI: "Total I",
                 tEmpty: "Empty Space",
                 tutBtn: "❓ Help", tutSkip: "Skip", tutNext: "Next 👉", tutFinish: "Start 🚀",
+                overlayBtn: "📊 Data View",
                 tutSteps: [
                     { id: null, text: "Welcome to HydroVolt 3D! 🎉\n\nA simulator where you can intuitively see electricity flowing like water." },
                     { id: 'tut-target-tools', text: "Select your desired tools here: wires, resistors, bulbs, and batteries." },
                     { id: 'tut-target-grid', text: "This is the 2D Blueprint.\nLeft-click (or tap) to place and rotate components in empty slots." },
                     { id: 'tut-target-inspector', text: "Right-click (or tap with Select tool) a placed component to change its voltage or resistance here." },
                     { id: 'tut-target-canvas', text: "Once connected, you can see the water flowing and the waterwheel (bulb) spinning in real-time in this 3D view!\n(Drag to rotate camera)" },
+                    { id: 'btn-overlay', text: "Click the 'Data View' button to display voltage (V) and current (A) floating over the 3D map, while the water changes color based on flow rate!" },
                     { id: 'tut-target-share', text: "Finally, copy your circuit code and share it with friends.\n\nYou are all set!" }
                 ],
                 exTitle: "Load Example Circuit",
@@ -286,9 +287,9 @@
                 examples: [
                     { name: "1. Basic Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFsxLDAsM10sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
                     { name: "2. Two Bulbs Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDVdLFsxLDAsM10sWzUsMCw1XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
-                    { name: "3. Resistor Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFs0LDAsOV0sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
-                    { name: "4. Resistor Parallel", code: "eyJjIjo2LCJyIjo0LCJkIjpbWzAsMCwzXSxbMCwwLDNdLFsyLDEsM10sWzQsMCw5XSxbMiwyLDNdLFswLDAsM10sWzIsMSwzXSxbNSwwLDBdLFszLDMsM10sWzAsMCwzXSxbMywxLDNdLFsyLDIsM10sWzEsMSwzXSxbMCwwLDNdLFsyLDAsM10sWzQsMCw5XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
-                    { name: "5. Two Bulbs Parallel", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzAsMCwzXSxbMiwxLDNdLFs1LDAsNV0sWzIsMiwzXSxbMCwwLDNdLFsyLDEsM10sWzMsMywzXSxbMCwwLDNdLFszLDEsM10sWzIsMiwzXSxbMSwxLDNdLFsyLDAsM10sWzUsMCw1XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" },
+                    { name: "3. Two Bulbs Parallel", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzAsMCwzXSxbMiwxLDNdLFs1LDAsNV0sWzIsMiwzXSxbMCwwLDNdLFsyLDEsM10sWzMsMywzXSxbMCwwLDNdLFszLDEsM10sWzIsMiwzXSxbMSwxLDNdLFsyLDAsM10sWzUsMCw1XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" },
+                    { name: "4. Resistor Series", code: "eyJjIjo1LCJyIjozLCJkIjpbWzIsMSwzXSxbNSwwLDBdLFs0LDAsOV0sWzQsMiw5XSxbMiwyLDNdLFsxLDEsM10sWzAsMCwzXSxbMCwwLDNdLFswLDAsM10sWzEsMSwzXSxbMiwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
+                    { name: "5. Resistor Parallel", code: "eyJjIjo2LCJyIjo0LCJkIjpbWzAsMCwzXSxbMCwwLDNdLFsyLDEsM10sWzQsMCw5XSxbMiwyLDNdLFswLDAsM10sWzIsMSwzXSxbNSwwLDBdLFszLDMsM10sWzAsMCwzXSxbMywxLDNdLFsyLDIsM10sWzEsMSwzXSxbMCwwLDNdLFsyLDAsM10sWzQsMCw5XSxbMiwzLDNdLFsxLDEsM10sWzIsMCwzXSxbMSwwLDNdLFsxLDAsM10sWzYsMCw5XSxbMSwwLDNdLFsyLDMsM11dfQ==" },
                     { name: "6. Wheatstone Bridge", code: "eyJjIjo1LCJyIjo0LCJkIjpbWzIsMSwzXSxbNCwwLDldLFszLDIsM10sWzQsMCwxOF0sWzIsMiwzXSxbMSwxLDNdLFswLDAsM10sWzUsMSw1XSxbMCwwLDNdLFsxLDEsM10sWzMsMSwzXSxbNCwwLDQuNV0sWzMsMCwzXSxbNCwwLDldLFszLDMsM10sWzIsMCwzXSxbMSwwLDNdLFs2LDAsOV0sWzEsMCwzXSxbMiwzLDNdXX0=" }
                 ]
             }
@@ -297,6 +298,9 @@
         let lang = 'ko';
         let currentTutStep = 0;
         let isTutorialActive = false;
+        let isDataOverlayOn = false; 
+        
+        let isUniformCurrent = true; // ★ 모든 물의 속력이 동일한지 체크
 
         function applyLanguage() {
             document.getElementById('ui-subtitle').innerHTML = i18n[lang].subtitle;
@@ -322,6 +326,7 @@
             document.getElementById('blueprint-title').textContent = `${i18n[lang].bp} (${COLS}x${ROWS})`;
             document.getElementById('lang-toggle').textContent = lang === 'ko' ? '🇺🇸 EN' : '🇰🇷 KO';
             document.getElementById('btn-tutorial').textContent = i18n[lang].tutBtn;
+            document.getElementById('btn-overlay').textContent = i18n[lang].overlayBtn;
             
             document.getElementById('ui-example-title').textContent = i18n[lang].exTitle;
             const selectEl = document.getElementById('example-select');
@@ -342,6 +347,18 @@
         document.getElementById('lang-toggle').addEventListener('click', () => {
             lang = lang === 'ko' ? 'en' : 'ko';
             applyLanguage();
+        });
+
+        document.getElementById('btn-overlay').addEventListener('click', (e) => {
+            isDataOverlayOn = !isDataOverlayOn;
+            if (isDataOverlayOn) {
+                e.target.classList.remove('bg-indigo-600', 'border-indigo-500');
+                e.target.classList.add('bg-pink-600', 'border-pink-500');
+            } else {
+                e.target.classList.remove('bg-pink-600', 'border-pink-500');
+                e.target.classList.add('bg-indigo-600', 'border-indigo-500');
+            }
+            build3D();
         });
 
         document.getElementById('example-select').addEventListener('change', (e) => {
@@ -417,7 +434,7 @@
         });
 
         // ==========================================
-        // 1. 데이터 모델 (5x3 초기화)
+        // 1. 데이터 모델
         // ==========================================
         let ROWS = 3, COLS = 5;
         let grid = Array(ROWS).fill(0).map(()=>Array(COLS).fill(0).map(()=>({t:0, r:0, v:3.0})));
@@ -427,6 +444,7 @@
         let lastMaxCurrent = 0; 
         let isCircuitFlowing = true;
         let isShortCircuit = false;
+        let animatables = []; 
 
         const initLayout = [
             [{t:2,r:1,v:3}, {t:1,r:0,v:3}, {t:6,r:0,v:9}, {t:1,r:0,v:3}, {t:2,r:2,v:3}],
@@ -526,7 +544,7 @@
         }
 
         // ==========================================
-        // 2. 물리 엔진 (SPICE) 및 단락(합선) 감지 시스템
+        // 2. 물리 엔진 (SPICE)
         // ==========================================
         function solveGaussian(A, B) {
             const n = B.length;
@@ -637,26 +655,37 @@
                 }
             }
 
+            // ★ 모든 물의 속력이 같은지(단일 회로) 체크 ★
             let maxCurrent = 0;
+            let minFlowingCurrent = Infinity;
             isCircuitFlowing = false;
 
             for (let z=0; z<ROWS; z++) {
                 for (let x=0; x<COLS; x++) {
-                    if (grid[z][x].t === 6) {
-                        const plusPort = (grid[z][x].r + 1) % 4;
+                    const cell = grid[z][x];
+                    if (cell.t !== 0) {
+                        const ports = getPorts(cell.t, cell.r);
                         const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
-                        const pz = z + dirs[plusPort][0], px = x + dirs[plusPort][1];
-                        
-                        if (isConnected(z, x, pz, px)) {
-                            const current = getCurrent(z, x, pz, px);
-                            if (Math.abs(current) > maxCurrent) maxCurrent = Math.abs(current);
-                            if (Math.abs(current) > 0.01) isCircuitFlowing = true;
+                        for(let d=0; d<4; d++) {
+                            if(ports[d]) {
+                                const nz = z + dirs[d][0], nx = x + dirs[d][1];
+                                if(isConnected(z, x, nz, nx)) {
+                                    const current = Math.abs(getCurrent(z, x, nz, nx));
+                                    if(current > maxCurrent) maxCurrent = current;
+                                    if(current > 0.01 && current < minFlowingCurrent) minFlowingCurrent = current;
+                                }
+                            }
                         }
                     }
                 }
             }
 
+            if (minFlowingCurrent === Infinity) minFlowingCurrent = 0;
             lastMaxCurrent = maxCurrent; 
+            isCircuitFlowing = maxCurrent > 0.01;
+            
+            // 전류가 흐르는 모든 구역의 속도가 거의 동일하면(=차이가 0.05 이내면) uniform 모드 발동
+            isUniformCurrent = isCircuitFlowing && ((maxCurrent - minFlowingCurrent) < 0.05);
 
             isShortCircuit = batteryFound && !hasResistorOrBulb && (maxCurrent > 50.0) && isCircuitFlowing;
 
@@ -706,7 +735,7 @@
         }
 
         // ==========================================
-        // 4. 3D 렌더링 코어 (웨일 브라우저 우클릭 제스처 차단 적용)
+        // 4. 3D 렌더링 코어
         // ==========================================
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -725,7 +754,6 @@
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         container.appendChild(renderer.domElement);
 
-        // ★ 웨일 및 브라우저 우클릭 마우스 제스처 원천 차단 ★
         const domEl = renderer.domElement;
         domEl.addEventListener('contextmenu', (e) => e.preventDefault());
         domEl.addEventListener('mousedown', (e) => { if (e.button === 2) e.preventDefault(); });
@@ -756,7 +784,7 @@
             3: new THREE.MeshStandardMaterial({ color: 0x16a34a, ...mCfg }), 
             4: new THREE.MeshStandardMaterial({ color: 0xea580c, ...mCfg }), 
             5: new THREE.MeshStandardMaterial({ color: 0x475569, ...mCfg }), 
-            6: new THREE.MeshStandardMaterial({ color: 0x1f2937, ...mCfg })  
+            6: new THREE.MeshStandardMaterial({ color: 0x1f2937, ...mCfg }) 
         };
         const edgeMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2, transparent: true, opacity: 0.3 });
 
@@ -766,8 +794,8 @@
 
         function createDashTex(isAxisZ) {
             const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128; const ctx = cv.getContext('2d');
-            ctx.fillStyle = '#0ea5e9'; ctx.fillRect(0,0,128,128);
-            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.clearRect(0,0,128,128); 
+            ctx.fillStyle = 'rgba(255,255,255,0.7)'; 
             if(isAxisZ) { ctx.fillRect(60, 20, 8, 30); ctx.fillRect(60, 80, 8, 20); }
             else { ctx.fillRect(20, 60, 30, 8); ctx.fillRect(80, 60, 20, 8); }
             const tex = new THREE.CanvasTexture(cv);
@@ -779,7 +807,7 @@
 
         const terrainGroup = new THREE.Group(); scene.add(terrainGroup);
         const waterGroup = new THREE.Group(); scene.add(waterGroup);
-        let animatables = []; 
+        const overlayGroup = new THREE.Group(); scene.add(overlayGroup); 
 
         const floor = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1).translate(0, -0.5, 0), new THREE.MeshStandardMaterial({ color: 0x334155 }));
         floor.receiveShadow = true; terrainGroup.add(floor);
@@ -787,16 +815,13 @@
         function disposeGroup(group) {
             const objects = [];
             group.children.forEach(child => child.traverse(obj => objects.push(obj)));
-            
             for (let i = objects.length - 1; i >= 0; i--) {
                 const obj = objects[i];
                 if (obj.parent) obj.parent.remove(obj);
                 if (obj.geometry) obj.geometry.dispose();
                 if (obj.material) {
-                    if (obj.material.map) {
-                        obj.material.map.dispose();
-                        obj.material.dispose();
-                    } else if (obj.material.isDynamicBulb || obj.material.isFloorText) {
+                    if (obj.material.map) { obj.material.map.dispose(); obj.material.dispose(); }
+                    else if (obj.material.isDynamicBulb || obj.material.isFloorText) {
                         if(obj.material.map) obj.material.map.dispose();
                         obj.material.dispose();
                     }
@@ -807,7 +832,6 @@
         function getBatteryBase(bz, bx, visited = new Set()) {
             if (visited.has(bz + "," + bx)) return 0;
             visited.add(bz + "," + bx);
-            
             const bCell = grid[bz][bx];
             const mPort = (bCell.r + 3) % 4;
             const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
@@ -818,9 +842,7 @@
                 if (nCell.t === 6) {
                     const nPlusPort = (nCell.r + 1) % 4;
                     const dirToMe = (bz===nZ-1)?0 : (bx===nX+1)?1 : (bz===nZ+1)?2 : 3;
-                    if (nPlusPort === dirToMe) {
-                        return getBatteryBase(nZ, nX, visited) + nCell.v;
-                    }
+                    if (nPlusPort === dirToMe) return getBatteryBase(nZ, nX, visited) + nCell.v;
                 }
                 return getBoundaryHeight(bz, bx, nZ, nX);
             }
@@ -831,7 +853,6 @@
             if (isConnected(cz, cx, nz, nx)) {
                 const cCell = grid[cz][cx], nCell = grid[nz][nx];
                 let cv = nodeV[cz][cx], nv = nodeV[nz][nx];
-                
                 let E1 = 0;
                 if (cCell.t === 6) {
                     const plusPort = (cCell.r + 1) % 4;
@@ -844,7 +865,6 @@
                     const nDirToC = (cz===nz-1)?0 : (cx===nx+1)?1 : (cz===nz+1)?2 : 3;
                     E2 = (nDirToC === plusPort) ? nCell.v / 2 : -nCell.v / 2;
                 }
-
                 const r1 = getResistance(cCell), r2 = getResistance(nCell);
                 const v_boundary = ((cv + E1) * r2 + (nv + E2) * r1) / (r1 + r2);
                 return Math.max(0, v_boundary); 
@@ -875,9 +895,42 @@
             return Math.max(0.1, nodeV[cz][cx]);
         }
 
+        function createTileDataSprite(vVal, iVal) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.beginPath(); ctx.roundRect(0, 0, 256, 128, 24); ctx.fill();
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 6; ctx.stroke();
+
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 36px Inter';
+            ctx.fillStyle = '#facc15'; ctx.fillText(`V: ${vVal.toFixed(1)}`, 128, 40);
+            ctx.fillStyle = '#4ade80'; ctx.fillText(`I: ${iVal.toFixed(2)}`, 128, 88);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, depthTest: false, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(1.0, 0.5, 1.0);
+            sprite.renderOrder = 999;
+            return sprite;
+        }
+
+        // ★ 유속이 균일할 땐 기본 파란색, 유속 차이가 생길 때만 색상 매핑 ★
+        function getWaterColor(iVal) {
+            if (!isDataOverlayOn) return 0x0ea5e9; 
+            if (lastMaxCurrent === 0 || iVal < 1e-4) return 0x0ea5e9; 
+            if (isUniformCurrent) return 0x0ea5e9; // 유속이 모두 같으면 파란색 유지!
+
+            const ratio = Math.min(1.0, iVal / lastMaxCurrent);
+            const hue = (1 - ratio) * 0.66; 
+            return new THREE.Color().setHSL(hue, 1.0, 0.55).getHex();
+        }
+
         function build3D() {
             disposeGroup(terrainGroup);
             disposeGroup(waterGroup);
+            disposeGroup(overlayGroup);
             animatables = [];
             const processedEdges = new Set(); 
 
@@ -920,12 +973,37 @@
                     let activeMat = colorMap[cell.t];
                     if (isShortCircuit) {
                         activeMat = new THREE.MeshStandardMaterial({ 
-                            color: 0xef4444, 
-                            emissive: 0xef4444, 
-                            emissiveIntensity: 0.6,
-                            roughness: 0.5 
+                            color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.6, roughness: 0.5 
                         });
                     }
+
+                    let localMaxI = 0;
+                    const ports = getPorts(cell.t, cell.r);
+                    const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+                    for(let d=0; d<4; d++) {
+                        if(ports[d]) {
+                            const nz = z + dirs[d][0], nx = x + dirs[d][1];
+                            if(isConnected(z, x, nz, nx)) localMaxI = Math.max(localMaxI, Math.abs(getCurrent(z, x, nz, nx)));
+                        }
+                    }
+                    let displayV = v; if(Math.abs(displayV) < 0.05) displayV = 0;
+                    if(localMaxI < 1e-4) localMaxI = 0;
+
+                    let highest = h;
+                    if (cell.t === 4 || cell.t === 5) {
+                        const isHoriz = (cell.r % 2 === 0);
+                        let v1 = isHoriz ? getBoundaryHeight(z, x, z, x-1) : getBoundaryHeight(z, x, z-1, x);
+                        let v2 = isHoriz ? getBoundaryHeight(z, x, z, x+1) : getBoundaryHeight(z, x, z+1, x);
+                        highest = Math.max(highest, toH(v1), toH(v2));
+                    } else if (cell.t === 6) {
+                        highest = toH(getBatteryBase(z, x) + cell.v);
+                    }
+                    
+                    const sprite = createTileDataSprite(displayV, localMaxI);
+                    sprite.position.set(x, highest + 0.8, z);
+                    sprite.visible = isDataOverlayOn;
+                    overlayGroup.add(sprite);
+                    animatables.push(() => { sprite.visible = isDataOverlayOn; });
 
                     if(cell.t === 6) {
                         const plusPort = (cell.r + 1) % 4;
@@ -948,7 +1026,6 @@
                         mMesh.position.set(x + negDir[1]*0.25, 0, z + negDir[0]*0.25);
                         mMesh.castShadow = true; mMesh.receiveShadow = true;
                         mMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(mGeo), edgeMat));
-                        mMesh.userData = { z, x }; 
                         terrainGroup.add(mMesh);
 
                         const pGeo = new THREE.BoxGeometry(minusW, h_plus, minusD).translate(0, h_plus/2, 0);
@@ -956,7 +1033,6 @@
                         pMesh.position.set(x + posDir[1]*0.25, 0, z + posDir[0]*0.25);
                         pMesh.castShadow = true; pMesh.receiveShadow = true;
                         pMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(pGeo), edgeMat));
-                        pMesh.userData = { z, x };
                         terrainGroup.add(pMesh);
 
                         const pipeH = Math.max(0.1, (h_plus + 0.6) - h_minus); 
@@ -966,7 +1042,6 @@
                         const vPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, pipeH, 16).translate(0, pipeH/2, 0), matMetal);
                         vPipe.position.set(vPipeX, h_minus, vPipeZ);
                         vPipe.castShadow = true;
-                        vPipe.userData = { z, x };
                         terrainGroup.add(vPipe);
 
                         const dropX = x + posDir[1]*0.25;
@@ -976,340 +1051,227 @@
                         const hPipeZ = (vPipeZ + dropZ) / 2;
 
                         const hPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, hPipeLen, 16), matMetal);
-                        if (isHorizontal) hPipe.rotation.z = Math.PI / 2;
-                        else hPipe.rotation.x = Math.PI / 2;
+                        if (isHorizontal) hPipe.rotation.z = Math.PI / 2; else hPipe.rotation.x = Math.PI / 2;
                         hPipe.position.set(hPipeX, h_plus + 0.6 - 0.06, hPipeZ);
                         hPipe.castShadow = true;
-                        hPipe.userData = { z, x };
                         terrainGroup.add(hPipe);
 
                         const waterW = isHorizontal ? 0.5 : 0.4;
                         const waterD = isHorizontal ? 0.4 : 0.5;
+                        let targetI = isConnected(z, x, z + posDir[0], x + posDir[1]) ? getCurrent(z, x, z + posDir[0], x + posDir[1]) : 0;
+
+                        const pWaterGeo = new THREE.PlaneGeometry(waterW, waterD).rotateX(-Math.PI/2);
+                        const baseMatP = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const waterBaseP = new THREE.Mesh(pWaterGeo, baseMatP);
+                        waterBaseP.position.set(x + posDir[1]*0.25, h_plus + 0.015, z + posDir[0]*0.25);
+                        waterGroup.add(waterBaseP);
 
                         const pTex = (isHorizontal ? globalTexX : globalTexZ).clone();
-                        const pWaterGeo = new THREE.PlaneGeometry(waterW, waterD).rotateX(-Math.PI/2);
-                        const pWaterMesh = new THREE.Mesh(pWaterGeo, new THREE.MeshBasicMaterial({ map: pTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
-                        pWaterMesh.position.set(x + posDir[1]*0.25, h_plus + 0.015, z + posDir[0]*0.25);
-                        pWaterMesh.userData = { z, x };
-                        waterGroup.add(pWaterMesh);
+                        const waterRippleP = new THREE.Mesh(pWaterGeo, new THREE.MeshBasicMaterial({ map: pTex, transparent:true, opacity:0.9, depthWrite:false }));
+                        waterRippleP.position.set(x + posDir[1]*0.25, h_plus + 0.016, z + posDir[0]*0.25);
+                        waterGroup.add(waterRippleP);
+
+                        const mWaterGeo = new THREE.PlaneGeometry(waterW, waterD).rotateX(-Math.PI/2);
+                        const baseMatM = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const waterBaseM = new THREE.Mesh(mWaterGeo, baseMatM);
+                        waterBaseM.position.set(x + negDir[1]*0.25, h_minus + 0.015, z + negDir[0]*0.25);
+                        waterGroup.add(waterBaseM);
 
                         const mTex = (isHorizontal ? globalTexX : globalTexZ).clone();
-                        const mWaterGeo = new THREE.PlaneGeometry(waterW, waterD).rotateX(-Math.PI/2);
-                        const mWaterMesh = new THREE.Mesh(mWaterGeo, new THREE.MeshBasicMaterial({ map: mTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
-                        mWaterMesh.position.set(x + negDir[1]*0.25, h_minus + 0.015, z + negDir[0]*0.25);
-                        mWaterMesh.userData = { z, x };
-                        waterGroup.add(mWaterMesh);
-
-                        const I_pump = isConnected(z, x, z + posDir[0], x + posDir[1]) ? getCurrent(z, x, z + posDir[0], x + posDir[1]) : 0;
-                        const absI = Math.abs(I_pump);
+                        const waterRippleM = new THREE.Mesh(mWaterGeo, new THREE.MeshBasicMaterial({ map: mTex, transparent:true, opacity:0.9, depthWrite:false }));
+                        waterRippleM.position.set(x + negDir[1]*0.25, h_minus + 0.016, z + negDir[0]*0.25);
+                        waterGroup.add(waterRippleM);
 
                         const dropDiff = (h_minus + pipeH) - h_plus - 0.1;
+                        let dropTex = null; let baseMatDrop = null;
                         if(dropDiff > 0) {
-                            const dropTex = globalTexZ.clone(); dropTex.repeat.set(1, dropDiff * 2);
-                            const drop = new THREE.Mesh(
-                                new THREE.PlaneGeometry(0.15, dropDiff).translate(0, -dropDiff/2, 0),
-                                new THREE.MeshBasicMaterial({ map: dropTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 })
-                            );
-                            drop.position.set(dropX, h_minus + pipeH - 0.1, dropZ);
-                            drop.rotation.y = (isHorizontal) ? (plusPort === 1 ? -Math.PI/2 : Math.PI/2) : (plusPort === 2 ? 0 : Math.PI);
-                            drop.userData = { z, x };
-                            waterGroup.add(drop);
-                            animatables.push(delta => dropTex.offset.y += absI * delta * (isShortCircuit ? 15.0 : 4.0)); 
+                            dropTex = globalTexZ.clone(); dropTex.repeat.set(1, dropDiff * 2);
+                            const dropGeo = new THREE.PlaneGeometry(0.15, dropDiff).translate(0, -dropDiff/2, 0);
+                            
+                            baseMatDrop = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                            const dropBase = new THREE.Mesh(dropGeo, baseMatDrop);
+                            dropBase.position.set(dropX, h_minus + pipeH - 0.1, dropZ);
+                            dropBase.rotation.y = (isHorizontal) ? (plusPort === 1 ? -Math.PI/2 : Math.PI/2) : (plusPort === 2 ? 0 : Math.PI);
+                            waterGroup.add(dropBase);
+
+                            const dropRipple = new THREE.Mesh(dropGeo, new THREE.MeshBasicMaterial({ map: dropTex, transparent:true, opacity:0.9, depthWrite:false }));
+                            dropRipple.position.copy(dropBase.position); dropRipple.rotation.copy(dropBase.rotation);
+                            waterGroup.add(dropRipple);
                         }
 
-                        const upTex = globalTexZ.clone();
                         const upH = pipeH - 0.2;
-                        const upMesh = new THREE.Mesh(
-                            new THREE.CylinderGeometry(0.13, 0.13, upH, 16).translate(0, upH/2, 0),
-                            new THREE.MeshBasicMaterial({ map: upTex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.5 })
-                        );
-                        upMesh.position.set(vPipeX, h_minus + 0.1, vPipeZ);
-                        upMesh.userData = { z, x };
-                        waterGroup.add(upMesh);
-                        animatables.push(delta => upTex.offset.y -= absI * delta * 2.0); 
+                        const upBaseMat = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const upBase = new THREE.Mesh(new THREE.CylinderGeometry(0.125, 0.125, upH, 16).translate(0, upH/2, 0), upBaseMat);
+                        upBase.position.set(vPipeX, h_minus + 0.1, vPipeZ);
+                        waterGroup.add(upBase);
+
+                        const upTex = globalTexZ.clone();
+                        const upRipple = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, upH, 16).translate(0, upH/2, 0), new THREE.MeshBasicMaterial({ map: upTex, transparent:true, opacity:0.5 }));
+                        upRipple.position.copy(upBase.position);
+                        waterGroup.add(upRipple);
+
+                        animatables.push(delta => {
+                            let currentI = targetI; 
+                            const absI = Math.abs(currentI);
+                            const wColor = isShortCircuit ? 0xef4444 : getWaterColor(absI);
+                            
+                            baseMatP.color.setHex(wColor); baseMatM.color.setHex(wColor); upBaseMat.color.setHex(wColor);
+                            if(baseMatDrop) baseMatDrop.color.setHex(wColor);
+                            
+                            pTex.offset.x -= currentI * delta * 2.0; pTex.offset.y -= currentI * delta * 2.0;
+                            mTex.offset.x -= currentI * delta * 2.0; mTex.offset.y -= currentI * delta * 2.0;
+                            if(dropTex) dropTex.offset.y += absI * delta * (isShortCircuit ? 15.0 : 4.0);
+                            upTex.offset.y -= absI * delta * 2.0;
+                        });
 
                         continue; 
                     }
 
-                    if (cell.t === 5) {
+                    if (cell.t === 4 || cell.t === 5) {
                         const isHorizontal = (cell.r % 2 === 0);
-                        let v1 = v, v2 = v; 
-                        
-                        if (isHorizontal) {
-                            v1 = getBoundaryHeight(z, x, z, x-1); 
-                            v2 = getBoundaryHeight(z, x, z, x+1); 
-                        } else {
-                            v1 = getBoundaryHeight(z, x, z-1, x); 
-                            v2 = getBoundaryHeight(z, x, z+1, x); 
-                        }
-
-                        let h1 = toH(v1);
-                        let h2 = toH(v2);
+                        let v1 = isHorizontal ? getBoundaryHeight(z, x, z, x-1) : getBoundaryHeight(z, x, z-1, x);
+                        let v2 = isHorizontal ? getBoundaryHeight(z, x, z, x+1) : getBoundaryHeight(z, x, z+1, x); 
+                        let h1 = toH(v1); let h2 = toH(v2);
 
                         const isH1High = h1 >= h2;
                         const highH = Math.max(h1, h2);
                         
-                        const len1 = 0.5;
-                        const len2 = 0.5;
-                        const offset1 = -0.25;
-                        const offset2 =  0.25;
-
-                        const w1 = isHorizontal ? len1 : 1.0;
-                        const d1 = isHorizontal ? 1.0 : len1;
-                        const w2 = isHorizontal ? len2 : 1.0;
-                        const d2 = isHorizontal ? 1.0 : len2;
-
-                        const cx1 = isHorizontal ? x + offset1 : x;
-                        const cz1 = isHorizontal ? z : z + offset1;
-                        const cx2 = isHorizontal ? x + offset2 : x;
-                        const cz2 = isHorizontal ? z : z + offset2;
+                        const len1 = 0.5; const len2 = 0.5;
+                        const w1 = isHorizontal ? len1 : 1.0; const d1 = isHorizontal ? 1.0 : len1;
+                        const w2 = isHorizontal ? len2 : 1.0; const d2 = isHorizontal ? 1.0 : len2;
+                        const cx1 = isHorizontal ? x - 0.25 : x; const cz1 = isHorizontal ? z : z - 0.25;
+                        const cx2 = isHorizontal ? x + 0.25 : x; const cz2 = isHorizontal ? z : z + 0.25;
 
                         const geo1 = new THREE.BoxGeometry(w1, h1, d1).translate(0, h1/2, 0);
                         const mesh1 = new THREE.Mesh(geo1, activeMat);
-                        mesh1.position.set(cx1, 0, cz1);
-                        mesh1.castShadow = true; mesh1.receiveShadow = true;
-                        mesh1.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo1), edgeMat));
-                        mesh1.userData = { z, x };
+                        mesh1.position.set(cx1, 0, cz1); mesh1.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo1), edgeMat));
                         terrainGroup.add(mesh1);
 
                         const geo2 = new THREE.BoxGeometry(w2, h2, d2).translate(0, h2/2, 0);
                         const mesh2 = new THREE.Mesh(geo2, activeMat);
-                        mesh2.position.set(cx2, 0, cz2);
-                        mesh2.castShadow = true; mesh2.receiveShadow = true;
-                        mesh2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat));
-                        mesh2.userData = { z, x };
+                        mesh2.position.set(cx2, 0, cz2); mesh2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat));
                         terrainGroup.add(mesh2);
 
-                        let I_flow = 0;
-                        if (isHorizontal) {
-                            if (isConnected(z, x, z, x+1)) I_flow = getCurrent(z, x, z, x+1);
-                            else if (isConnected(z, x, z, x-1)) I_flow = -getCurrent(z, x, z, x-1);
-                        } else {
-                            if (isConnected(z, x, z+1, x)) I_flow = getCurrent(z, x, z+1, x);
-                            else if (isConnected(z, x, z-1, x)) I_flow = -getCurrent(z, x, z-1, x);
-                        }
-                        const absI = Math.abs(I_flow);
-
-                        const waterW1 = isHorizontal ? len1 : 0.4;
-                        const waterD1 = isHorizontal ? 0.4 : len1;
-                        const tex1 = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const waterW1 = isHorizontal ? len1 : 0.4; const waterD1 = isHorizontal ? 0.4 : len1;
                         const pWaterGeo1 = new THREE.PlaneGeometry(waterW1, waterD1).rotateX(-Math.PI/2);
-                        const wMesh1 = new THREE.Mesh(pWaterGeo1, new THREE.MeshBasicMaterial({ map: tex1, color: 0xffffff, transparent:true, opacity:0.9 }));
-                        wMesh1.position.set(cx1, h1 + 0.015, cz1);
-                        wMesh1.userData = { z, x };
-                        waterGroup.add(wMesh1);
+                        const baseMat1 = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const waterBase1 = new THREE.Mesh(pWaterGeo1, baseMat1);
+                        waterBase1.position.set(cx1, h1 + 0.015, cz1); waterGroup.add(waterBase1);
+                        
+                        const tex1 = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const waterRipple1 = new THREE.Mesh(pWaterGeo1, new THREE.MeshBasicMaterial({ map: tex1, transparent:true, opacity:0.9, depthWrite:false }));
+                        waterRipple1.position.set(cx1, h1 + 0.016, cz1); waterGroup.add(waterRipple1);
 
-                        const waterW2 = isHorizontal ? len2 : 0.4;
-                        const waterD2 = isHorizontal ? 0.4 : len2;
+                        const pWaterGeo2 = new THREE.PlaneGeometry(waterW1, waterD1).rotateX(-Math.PI/2);
+                        const baseMat2 = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const waterBase2 = new THREE.Mesh(pWaterGeo2, baseMat2);
+                        waterBase2.position.set(cx2, h2 + 0.015, cz2); waterGroup.add(waterBase2);
+                        
                         const tex2 = (isHorizontal ? globalTexX : globalTexZ).clone();
-                        const pWaterGeo2 = new THREE.PlaneGeometry(waterW2, waterD2).rotateX(-Math.PI/2);
-                        const wMesh2 = new THREE.Mesh(pWaterGeo2, new THREE.MeshBasicMaterial({ map: tex2, color: 0xffffff, transparent:true, opacity:0.9 }));
-                        wMesh2.position.set(cx2, h2 + 0.015, cz2);
-                        wMesh2.userData = { z, x };
-                        waterGroup.add(wMesh2);
-
-                        animatables.push(delta => {
-                            if (isHorizontal) {
-                                tex1.offset.x -= I_flow * delta * 0.8;
-                                tex2.offset.x -= I_flow * delta * 0.8;
-                            } else {
-                                tex1.offset.y += I_flow * delta * 0.8;
-                                tex2.offset.y += I_flow * delta * 0.8;
-                            }
-                        });
+                        const waterRipple2 = new THREE.Mesh(pWaterGeo2, new THREE.MeshBasicMaterial({ map: tex2, transparent:true, opacity:0.9, depthWrite:false }));
+                        waterRipple2.position.set(cx2, h2 + 0.016, cz2); waterGroup.add(waterRipple2);
 
                         const dropDiff = Math.abs(h1 - h2);
                         let wheelY = h1, wheelX = x, wheelZ = z;
+                        let dropTex = null; let baseMatDrop = null;
 
                         if (dropDiff > 0.1) {
-                            const dropTex = globalTexZ.clone(); dropTex.repeat.set(1, dropDiff * 1.5);
-                            const drop = new THREE.Mesh(
-                                new THREE.PlaneGeometry(0.4, dropDiff).translate(0, -dropDiff/2, 0),
-                                new THREE.MeshBasicMaterial({ map: dropTex, color: 0xffffff, transparent:true, opacity:0.9 })
-                            );
-
-                            drop.position.set(x, highH + 0.015, z); 
+                            dropTex = globalTexZ.clone(); dropTex.repeat.set(1, dropDiff * 1.5);
+                            const dropGeo = new THREE.PlaneGeometry(0.4, dropDiff).translate(0, -dropDiff/2, 0);
+                            
+                            baseMatDrop = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                            const dropBase = new THREE.Mesh(dropGeo, baseMatDrop);
+                            dropBase.position.set(x, highH + 0.015, z);
                             
                             const zFightOffset = 0.005;
                             if (isHorizontal) {
-                                if (isH1High) { drop.rotation.y = Math.PI/2; drop.position.x += zFightOffset; }
-                                else { drop.rotation.y = -Math.PI/2; drop.position.x -= zFightOffset; }
+                                if (isH1High) { dropBase.rotation.y = Math.PI/2; dropBase.position.x += zFightOffset; }
+                                else { dropBase.rotation.y = -Math.PI/2; dropBase.position.x -= zFightOffset; }
                             } else {
-                                if (isH1High) { drop.rotation.y = 0; drop.position.z += zFightOffset; }
-                                else { drop.rotation.y = Math.PI; drop.position.z -= zFightOffset; }
+                                if (isH1High) { dropBase.rotation.y = 0; dropBase.position.z += zFightOffset; }
+                                else { dropBase.rotation.y = Math.PI; dropBase.position.z -= zFightOffset; }
                             }
-                            drop.userData = { z, x };
-                            waterGroup.add(drop);
-                            animatables.push(delta => dropTex.offset.y += absI * delta * 2.5);
+                            waterGroup.add(dropBase);
+
+                            const dropRipple = new THREE.Mesh(dropGeo, new THREE.MeshBasicMaterial({ map: dropTex, transparent:true, opacity:0.9, depthWrite:false }));
+                            dropRipple.position.copy(dropBase.position); dropRipple.rotation.copy(dropBase.rotation);
+                            waterGroup.add(dropRipple);
 
                             wheelY = Math.max(Math.min(h1, h2) + 0.25, highH - dropDiff / 2);
-                            if (isHorizontal) wheelX = x + (isH1High ? 0.2 : -0.2);
-                            else wheelZ = z + (isH1High ? 0.2 : -0.2);
+                            if (isHorizontal) wheelX = x + (isH1High ? 0.2 : -0.2); else wheelZ = z + (isH1High ? 0.2 : -0.2);
                         } else {
                             wheelY = highH + 0.2;
                         }
-                        
-                        const bGroup = new THREE.Group(); 
-                        bGroup.position.set(wheelX, wheelY, wheelZ); 
-                        terrainGroup.add(bGroup);
-                        
-                        const wheelGroup = new THREE.Group();
-                        const axisMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8), axisMat);
-                        axisMesh.userData = { z, x };
-                        wheelGroup.add(axisMesh);
 
-                        for(let i=0; i<4; i++) {
-                            const paddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.38), paddleMat);
-                            paddle.rotation.y = (Math.PI / 4) * i;
-                            paddle.castShadow = true;
-                            paddle.userData = { z, x };
-                            wheelGroup.add(paddle);
+                        if (cell.t === 4) { // 저항 배플
+                            const baffleMat = new THREE.MeshStandardMaterial({ color: isShortCircuit ? 0xef4444 : 0xea580c, roughness: 0.4, metalness: 0.2 });
+                            for(let i=1; i<=4; i++) {
+                                const flowPos = i / 5; const side = (i % 2 === 0) ? 1 : -1; const crossOffset = side * 0.06; 
+                                let ox = isHorizontal ? x - 0.5 + flowPos : x + crossOffset;
+                                let oz = isHorizontal ? z + crossOffset : z - 0.5 + flowPos;
+                                let oy = h1 * (1 - flowPos) + h2 * flowPos;
+                                const bGeo = new THREE.BoxGeometry(isHorizontal ? 0.08 : 0.28, 0.12, isHorizontal ? 0.28 : 0.08).translate(0, 0.06, 0);
+                                const bMesh = new THREE.Mesh(bGeo, baffleMat);
+                                bMesh.position.set(ox, oy, oz); bMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(bGeo), edgeMat));
+                                terrainGroup.add(bMesh);
+                            }
+                        }
+                        
+                        let bGroup = null, wheelGroup = null, bMat = null, pLight = null;
+                        if (cell.t === 5) {
+                            bGroup = new THREE.Group(); bGroup.position.set(wheelX, wheelY, wheelZ); terrainGroup.add(bGroup);
+                            wheelGroup = new THREE.Group();
+                            const axisMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8), axisMat);
+                            wheelGroup.add(axisMesh);
+
+                            for(let i=0; i<4; i++) {
+                                const paddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.38), paddleMat);
+                                paddle.rotation.y = (Math.PI / 4) * i;
+                                wheelGroup.add(paddle);
+                            }
+                            if (isHorizontal) wheelGroup.rotation.x = Math.PI / 2; else wheelGroup.rotation.z = Math.PI / 2; 
+                            bGroup.add(wheelGroup);
+
+                            bMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 });
+                            const bSphere = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), bMat);
+                            bSphere.position.y = 0.35; bGroup.add(bSphere);
+                            pLight = new THREE.PointLight(0xffff00, 0, 4); pLight.position.y = 0.35; bGroup.add(pLight);
                         }
 
-                        if (isHorizontal) wheelGroup.rotation.x = Math.PI / 2; 
-                        else wheelGroup.rotation.z = Math.PI / 2; 
-                        bGroup.add(wheelGroup);
-
-                        const bMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 });
-                        bMat.isDynamicBulb = true;
-                        const bSphere = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), bMat);
-                        
-                        bSphere.position.y = 0.35; 
-                        bSphere.userData = { z, x };
-                        bGroup.add(bSphere);
-                        
-                        const pLight = new THREE.PointLight(0xffff00, 0, 4); 
-                        pLight.position.y = 0.35; 
-                        bGroup.add(pLight);
+                        let targetI = 0;
+                        if (isHorizontal) {
+                            if (isConnected(z, x, z, x+1)) targetI = getCurrent(z, x, z, x+1);
+                            else if (isConnected(z, x, z, x-1)) targetI = -getCurrent(z, x, z, x-1);
+                        } else {
+                            if (isConnected(z, x, z+1, x)) targetI = getCurrent(z, x, z+1, x);
+                            else if (isConnected(z, x, z-1, x)) targetI = -getCurrent(z, x, z-1, x);
+                        }
 
                         animatables.push(delta => {
-                            const sign = isHorizontal ? 1 : -1; 
-                            wheelGroup.rotateY(sign * I_flow * delta * 6.66); 
+                            let currentI = targetI;
+                            const absI = Math.abs(currentI);
+                            const wColor = isShortCircuit ? 0xef4444 : getWaterColor(absI);
                             
-                            const brightness = Math.abs(I_flow);
-                            if (brightness < 1e-4) {
-                                bMat.color.setHex(0x475569);
-                                bMat.emissive.setHex(0x000000);
-                                pLight.intensity = 0;
-                            } else {
-                                bMat.color.setHex(0xffff00);
-                                bMat.emissive.setHex(0xffff00);
-                                bMat.emissiveIntensity = Math.min(40, brightness * 2.5);     
-                                pLight.intensity = Math.min(80, brightness * 4.0);
-                            }
-                        });
-                        continue; 
-                    }
+                            baseMat1.color.setHex(wColor); baseMat2.color.setHex(wColor);
+                            if(baseMatDrop) baseMatDrop.color.setHex(wColor);
 
-                    if (cell.t === 4) {
-                        const isHorizontal = (cell.r % 2 === 0);
-                        let v1 = v, v2 = v; 
-                        
-                        if (isHorizontal) {
-                            v1 = getBoundaryHeight(z, x, z, x-1); 
-                            v2 = getBoundaryHeight(z, x, z, x+1); 
-                        } else {
-                            v1 = getBoundaryHeight(z, x, z-1, x); 
-                            v2 = getBoundaryHeight(z, x, z+1, x); 
-                        }
+                            if (isHorizontal) { tex1.offset.x -= currentI * delta * 0.5; tex2.offset.x -= currentI * delta * 0.5; }
+                            else { tex1.offset.y += currentI * delta * 0.5; tex2.offset.y += currentI * delta * 0.5; }
+                            if(dropTex) dropTex.offset.y += absI * delta * 2.5;
 
-                        let h1 = toH(v1);
-                        let h2 = toH(v2);
-
-                        const geo = new THREE.BoxGeometry(1, 1, 1);
-                        const pos = geo.attributes.position;
-                        for(let i=0; i<pos.count; i++){
-                            let vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
-                            if (vy < 0) { 
-                                pos.setY(i, 0); 
-                            } else {
-                                if (isHorizontal) {
-                                    pos.setY(i, vx < 0 ? h1 : h2);
-                                } else {
-                                    pos.setY(i, vz < 0 ? h1 : h2);
+                            if (cell.t === 5) {
+                                const sign = isHorizontal ? 1 : -1; 
+                                wheelGroup.rotateY(sign * currentI * delta * 6.66); 
+                                
+                                if (absI < 1e-4) { bMat.color.setHex(0x475569); bMat.emissive.setHex(0x000000); pLight.intensity = 0; }
+                                else {
+                                    bMat.color.setHex(0xffff00); bMat.emissive.setHex(0xffff00);
+                                    bMat.emissiveIntensity = Math.min(40, absI * 2.5); pLight.intensity = Math.min(80, absI * 4.0);
                                 }
                             }
-                        }
-                        geo.computeVertexNormals();
-                        const mesh = new THREE.Mesh(geo, activeMat);
-                        mesh.position.set(x, 0, z);
-                        mesh.castShadow = true; mesh.receiveShadow = true;
-                        mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
-                        mesh.userData = { z, x };
-                        terrainGroup.add(mesh);
-
-                        let I_flow = 0;
-                        if (isHorizontal) {
-                            if (isConnected(z, x, z, x+1)) I_flow = getCurrent(z, x, z, x+1);
-                            else if (isConnected(z, x, z, x-1)) I_flow = -getCurrent(z, x, z, x-1);
-                        } else {
-                            if (isConnected(z, x, z+1, x)) I_flow = getCurrent(z, x, z+1, x);
-                            else if (isConnected(z, x, z-1, x)) I_flow = -getCurrent(z, x, z-1, x);
-                        }
-
-                        const waterW = isHorizontal ? 1.0 : 0.4;
-                        const waterD = isHorizontal ? 0.4 : 1.0;
-                        const tex = (isHorizontal ? globalTexX : globalTexZ).clone();
-                        const wGeo = new THREE.PlaneGeometry(waterW, waterD, Math.round(waterW*5), Math.round(waterD*5));
-                        wGeo.rotateX(-Math.PI/2);
-                        const wPos = wGeo.attributes.position;
-                        for(let i=0; i<wPos.count; i++) {
-                            let vx = wPos.getX(i), vz = wPos.getZ(i);
-                            let vy = 0;
-                            if (isHorizontal) {
-                                let t = vx + 0.5; 
-                                vy = h1 * (1 - t) + h2 * t;
-                            } else {
-                                let t = vz + 0.5; 
-                                vy = h1 * (1 - t) + h2 * t;
-                            }
-                            wPos.setY(i, vy + 0.015);
-                        }
-                        wGeo.computeVertexNormals();
-                        const wMesh = new THREE.Mesh(wGeo, new THREE.MeshBasicMaterial({ map: tex, color: 0xffffff, transparent:true, opacity:0.85 }));
-                        wMesh.position.set(x, 0, z);
-                        wMesh.userData = { z, x };
-                        waterGroup.add(wMesh);
-
-                        animatables.push(delta => {
-                            if (isHorizontal) tex.offset.x -= I_flow * delta * 0.5;
-                            else tex.offset.y += I_flow * delta * 0.5;
                         });
 
-                        const baffleCount = 4; 
-                        const baffleMat = new THREE.MeshStandardMaterial({ color: isShortCircuit ? 0xef4444 : 0xea580c, roughness: 0.4, metalness: 0.2 });
-                        
-                        for(let i=1; i<=baffleCount; i++) {
-                            const flowPos = i / (baffleCount + 1); 
-                            const side = (i % 2 === 0) ? 1 : -1; 
-                            const crossOffset = side * 0.06; 
-                            
-                            let ox, oz, oy;
-                            let bWidth, bDepth;
-
-                            if (isHorizontal) {
-                                ox = x - 0.5 + flowPos;
-                                oz = z + crossOffset;
-                                oy = h1 * (1 - flowPos) + h2 * flowPos;
-                                bWidth = 0.08;
-                                bDepth = 0.28; 
-                            } else {
-                                ox = x + crossOffset;
-                                oz = z - 0.5 + flowPos;
-                                oy = h1 * (1 - flowPos) + h2 * flowPos;
-                                bWidth = 0.28;
-                                bDepth = 0.08;
-                            }
-                            
-                            const bGeo = new THREE.BoxGeometry(bWidth, 0.12, bDepth).translate(0, 0.06, 0);
-                            const bMesh = new THREE.Mesh(bGeo, baffleMat);
-                            
-                            bMesh.position.set(ox, oy, oz);
-                            bMesh.castShadow = true; bMesh.receiveShadow = true;
-                            bMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(bGeo), edgeMat));
-                            terrainGroup.add(bMesh);
-                        }
-                        continue;
+                        continue; 
                     }
 
                     const boxGeo = new THREE.BoxGeometry(1, h, 1).translate(0, h/2, 0);
@@ -1317,17 +1279,27 @@
                     block.position.set(x, 0, z);
                     block.castShadow = true; block.receiveShadow = true;
                     block.add(new THREE.LineSegments(new THREE.EdgesGeometry(boxGeo), edgeMat));
-                    block.userData = { z, x };
                     terrainGroup.add(block);
 
-                    const ports = getPorts(cell.t, cell.r);
                     const waterH = h + 0.015;
                     
                     if(ports.includes(1)) {
-                        const centerMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.4), new THREE.MeshBasicMaterial({ color: isShortCircuit ? 0xef4444 : 0x0ea5e9 }));
+                        let centerMaxI = 0;
+                        const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
+                        for(let d=0; d<4; d++) {
+                            if(ports[d]) {
+                                const nz = z + dirs[d][0], nx = x + dirs[d][1];
+                                if(isConnected(z, x, nz, nx)) centerMaxI = Math.max(centerMaxI, Math.abs(getCurrent(z, x, nz, nx)));
+                            }
+                        }
+                        const centerBaseMat = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const centerMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.4), centerBaseMat);
                         centerMesh.rotation.x = -Math.PI/2; centerMesh.position.set(x, waterH, z);
-                        centerMesh.userData = { z, x };
                         waterGroup.add(centerMesh);
+
+                        animatables.push(() => {
+                            centerBaseMat.color.setHex(isShortCircuit ? 0xef4444 : getWaterColor(centerMaxI));
+                        });
                     }
 
                     const processEdge = (dirIdx, nz, nx, isZ, isPosDir) => {
@@ -1340,52 +1312,59 @@
 
                             const nCell = grid[nz][nx];
                             const edgeWaterH = toH(getBoundaryHeight(z, x, nz, nx)) + 0.015;
+                            
+                            let targetI = getCurrent(z, x, nz, nx);
+
+                            const baseMatEdge = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.9 });
+                            const texEdge = (isZ ? globalTexZ : globalTexX).clone();
+                            const rippleMatEdge = new THREE.MeshBasicMaterial({ map: texEdge, transparent:true, opacity:0.9, depthWrite: false });
 
                             if (nCell.t === 4 || nCell.t === 5 || nCell.t === 6 || cell.t === 4 || cell.t === 5 || cell.t === 6) {
-                                const tex = (isZ ? globalTexZ : globalTexX).clone();
-                                const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.5, isZ ? 0.5 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
-                                mesh.rotation.x = -Math.PI/2;
                                 
+                                const planeGeo = new THREE.PlaneGeometry(isZ ? 0.4 : 0.5, isZ ? 0.5 : 0.4); planeGeo.rotateX(-Math.PI/2);
                                 const px = isZ ? x : x + (isPosDir ? 0.25 : -0.25);
                                 const pz = isZ ? z + (isPosDir ? 0.25 : -0.25) : z;
-                                mesh.position.set(px, edgeWaterH, pz);
-                                mesh.userData = { z, x }; 
-                                waterGroup.add(mesh);
                                 
-                                const I = getCurrent(z, x, nz, nx);
+                                const baseMesh = new THREE.Mesh(planeGeo, baseMatEdge); baseMesh.position.set(px, edgeWaterH, pz); waterGroup.add(baseMesh);
+                                const rippleMesh = new THREE.Mesh(planeGeo, rippleMatEdge); rippleMesh.position.set(px, edgeWaterH + 0.001, pz); waterGroup.add(rippleMesh);
+                                
                                 animatables.push(delta => {
-                                    const dir = (I > 0) ? (isZ ? (nz>z?1:-1) : (nx>x?1:-1)) : (isZ ? (nz>z?-1:1) : (nx>x?-1:1));
-                                    if(isZ) tex.offset.y += dir * Math.abs(I) * delta * (isShortCircuit ? 15.0 : 2.0); 
-                                    else tex.offset.x -= dir * Math.abs(I) * delta * (isShortCircuit ? 15.0 : 2.0);
+                                    let currentI = targetI;
+                                    const absI = Math.abs(currentI);
+                                    baseMatEdge.color.setHex(isShortCircuit ? 0xef4444 : getWaterColor(absI));
+
+                                    const dir = (currentI > 0) ? (isZ ? (nz>z?1:-1) : (nx>x?1:-1)) : (isZ ? (nz>z?-1:1) : (nx>x?-1:1));
+                                    if(isZ) texEdge.offset.y += dir * absI * delta * (isShortCircuit ? 15.0 : 2.0); 
+                                    else texEdge.offset.x -= dir * absI * delta * (isShortCircuit ? 15.0 : 2.0);
                                 });
                                 return;
                             }
 
-                            const I = getCurrent(z, x, nz, nx);
-                            const absI = Math.abs(I);
                             let nh = toH(nodeV[nz][nx]);
-                            
                             if (Math.abs(h - nh) < 0.05) {
-                                const tex = (isZ ? globalTexZ : globalTexX).clone();
-                                const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.6, isZ ? 0.6 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
-                                mesh.rotation.x = -Math.PI/2;
-                                mesh.position.set(isZ ? x : x + (isPosDir ? 0.5 : -0.5), Math.max(h, nh) + 0.015, isZ ? z + (isPosDir ? 0.5 : -0.5) : z);
-                                mesh.userData = { z, x };
-                                waterGroup.add(mesh);
+                                const planeGeo = new THREE.PlaneGeometry(isZ ? 0.4 : 0.6, isZ ? 0.6 : 0.4); planeGeo.rotateX(-Math.PI/2);
+                                const px = isZ ? x : x + (isPosDir ? 0.5 : -0.5);
+                                const pz = isZ ? z + (isPosDir ? 0.5 : -0.5) : z;
+
+                                const baseMesh = new THREE.Mesh(planeGeo, baseMatEdge); baseMesh.position.set(px, Math.max(h, nh) + 0.015, pz); waterGroup.add(baseMesh);
+                                const rippleMesh = new THREE.Mesh(planeGeo, rippleMatEdge); rippleMesh.position.set(px, Math.max(h, nh) + 0.016, pz); waterGroup.add(rippleMesh);
 
                                 animatables.push(delta => {
-                                    const dir = (I > 0) ? (isZ ? (nz>z?1:-1) : (nx>x?1:-1)) : (isZ ? (nz>z?-1:1) : (nx>x?-1:1));
-                                    if(isZ) tex.offset.y += dir * absI * delta * (isShortCircuit ? 15.0 : 2.0); 
-                                    else tex.offset.x -= dir * absI * delta * (isShortCircuit ? 15.0 : 2.0);
+                                    let currentI = targetI;
+                                    const absI = Math.abs(currentI);
+                                    baseMatEdge.color.setHex(isShortCircuit ? 0xef4444 : getWaterColor(absI));
+
+                                    const dir = (currentI > 0) ? (isZ ? (nz>z?1:-1) : (nx>x?1:-1)) : (isZ ? (nz>z?-1:1) : (nx>x?-1:1));
+                                    if(isZ) texEdge.offset.y += dir * absI * delta * (isShortCircuit ? 15.0 : 2.0); 
+                                    else texEdge.offset.x -= dir * absI * delta * (isShortCircuit ? 15.0 : 2.0);
                                 });
                             }
                         } else {
                             const myEdgeH = toH(getEdgeHeight(z, x, dirIdx));
                             const tex = (isZ ? globalTexZ : globalTexX).clone();
-                            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.3, isZ ? 0.3 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: isShortCircuit ? 0xef4444 : 0xffffff, transparent:true, opacity:0.9 }));
+                            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(isZ ? 0.4 : 0.3, isZ ? 0.3 : 0.4), new THREE.MeshBasicMaterial({ map: tex, color: 0xffffff, transparent:true, opacity:0.9 }));
                             mesh.rotation.x = -Math.PI/2;
                             mesh.position.set(isZ ? x : x + (isPosDir ? 0.35 : -0.35), Math.max(0.1, myEdgeH) + 0.015, isZ ? z + (isPosDir ? 0.35 : -0.35) : z);
-                            mesh.userData = { z, x };
                             waterGroup.add(mesh);
                         }
                     };
@@ -1437,7 +1416,7 @@
                         let vDisplay = nodeV[z][x];
                         if(Math.abs(vDisplay) < 0.05) vDisplay = 0;
 
-                        const typeName = [i18n[lang].tEmpty, i18n[lang].tWire, i18n[lang].tCorner, i18n[lang].tTjunc, i18n[lang].tRes, i18n[lang].tBulb, i18n[lang].tBatt][cell.t];
+                        const typeName = ["빈 공간", "일자 전선", "코너 전선", "T자 전선", "저항", "전구", "배터리"][cell.t];
                         
                         tooltip.innerHTML = `<div style="color:#22d3ee; font-weight:bold; margin-bottom:4px; border-bottom:1px solid #334155; padding-bottom:2px;">${typeName}</div>${i18n[lang].tooltipV}: ${vDisplay.toFixed(2)} V<br>${i18n[lang].tooltipI}: ${maxI.toFixed(2)} A`;
                         tooltip.style.left = (e.clientX + 15) + 'px';
@@ -1534,17 +1513,10 @@
                     render2DUI(); 
                 };
 
-                slider.addEventListener('input', (e) => {
-                    numInput.value = e.target.value;
-                    syncValues(e.target.value);
-                });
-                
-                numInput.addEventListener('input', (e) => {
-                    slider.value = e.target.value;
-                    syncValues(e.target.value);
-                });
+                slider.addEventListener('input', (e) => { numInput.value = e.target.value; syncValues(e.target.value); });
+                numInput.addEventListener('input', (e) => { slider.value = e.target.value; syncValues(e.target.value); });
             } else {
-                let name = [i18n[lang].tEmpty, i18n[lang].tWire, i18n[lang].tCorner, i18n[lang].tTjunc, "", i18n[lang].tBulb][item.t];
+                let name = ["빈 공간", "일자 전선", "코너 전선", "T자 전선", "저항", "전구", "배터리"][item.t];
                 insp.innerHTML = `<span class="text-slate-400 text-[10px] text-center w-full block">[${name}] - ${i18n[lang].noProp}</span>`;
             }
         }
@@ -1566,17 +1538,12 @@
                     
                     if(item.t !== 0) {
                         const ports = getPorts(item.t, item.r);
-                        
                         let maxI = 0;
                         const dirs = [[-1,0], [0,1], [1,0], [0,-1]];
                         for(let d=0; d<4; d++) {
                             if(ports[d]) {
-                                const nz = z + dirs[d][0];
-                                const nx = x + dirs[d][1];
-                                if(isConnected(z, x, nz, nx)) {
-                                    const currentVal = Math.abs(getCurrent(z, x, nz, nx));
-                                    if(currentVal > maxI) maxI = currentVal;
-                                }
+                                const nz = z + dirs[d][0], nx = x + dirs[d][1];
+                                if(isConnected(z, x, nz, nx)) maxI = Math.max(maxI, Math.abs(getCurrent(z, x, nz, nx)));
                             }
                         }
                         if (maxI < 1e-4) maxI = 0;
@@ -1588,63 +1555,43 @@
                         if(item.t!==6) { const d=document.createElement('div'); d.className='port-line port-C'; cell.appendChild(d); }
                         
                         if(item.t===4) { 
-                            const d=document.createElement('div'); 
-                            d.className='c-res'; 
-                            d.innerText = `${item.v}Ω`;
-                            cell.appendChild(d); 
+                            const d=document.createElement('div'); d.className='c-res'; d.innerText = `${item.v}Ω`; cell.appendChild(d); 
                         }
                         if(item.t===5) { 
                             const d=document.createElement('div'); 
                             d.className='c-bulb'; 
-                            if (maxI === 0) {
-                                d.style.background = '#475569'; 
-                                d.style.boxShadow = 'none';
-                            } else {
-                                const alpha = Math.min(1, 0.4 + maxI * 0.3); 
-                                const blur = Math.min(20, 5 + maxI * 10); 
-                                d.style.background = `rgba(234, 179, 8, ${alpha})`;
-                                d.style.boxShadow = `0 0 ${blur}px rgba(234, 179, 8, ${alpha})`;
+                            if (maxI === 0) { d.style.background = '#475569'; d.style.boxShadow = 'none'; } 
+                            else {
+                                const alpha = Math.min(1, 0.4 + maxI * 0.3); const blur = Math.min(20, 5 + maxI * 10); 
+                                d.style.background = `rgba(234, 179, 8, ${alpha})`; d.style.boxShadow = `0 0 ${blur}px rgba(234, 179, 8, ${alpha})`;
                             }
                             cell.appendChild(d); 
                         }
                         if(item.t===6) { 
-                            const d=document.createElement('div'); 
-                            d.className='c-batt'; 
-                            d.style.transform = `rotate(${item.r * 90}deg)`;
+                            const d=document.createElement('div'); d.className='c-batt'; d.style.transform = `rotate(${item.r * 90}deg)`;
                             d.innerHTML = `<span class="text-white bg-black px-[2px] rounded-sm text-[7px]">-</span><span class="text-white text-[8px] font-bold">${item.v}V</span><span class="text-white bg-red-500 px-[2px] rounded-sm text-[7px]">+</span>`;
                             cell.appendChild(d); 
                         }
 
                         if (item.t !== 6 && item.t !== 4) {
-                            const vLabel = document.createElement('span');
-                            vLabel.className = 'v-label';
-                            let displayV = nodeV[z][x];
-                            if(Math.abs(displayV) < 0.05) displayV = 0; 
-                            vLabel.innerText = displayV.toFixed(1);
-                            cell.appendChild(vLabel);
+                            const vLabel = document.createElement('span'); vLabel.className = 'v-label';
+                            let displayV = nodeV[z][x]; if(Math.abs(displayV) < 0.05) displayV = 0; 
+                            vLabel.innerText = displayV.toFixed(1); cell.appendChild(vLabel);
                         }
 
-                        const iLabel = document.createElement('span');
-                        iLabel.className = 'i-label';
-                        iLabel.innerText = maxI.toFixed(2) + 'A';
-                        cell.appendChild(iLabel);
+                        const iLabel = document.createElement('span'); iLabel.className = 'i-label';
+                        iLabel.innerText = maxI.toFixed(2) + 'A'; cell.appendChild(iLabel);
                     }
 
                     cell.addEventListener('contextmenu', e => e.preventDefault());
-                    
                     cell.addEventListener('pointerdown', (e) => {
                         if (e.button === 2 || selectedTool === -1) {
-                            selectedCell = {z, x};
-                            render2DUI(); 
-                            updateInspector();
-                            return;
+                            selectedCell = {z, x}; render2DUI(); updateInspector(); return;
                         }
-                        
                         if (e.button === 0 || e.pointerType === 'touch') {
                             selectedCell = {z, x}; 
-                            if (item.t === selectedTool && selectedTool !== 0) {
-                                grid[z][x].r = (grid[z][x].r + 1) % 4; 
-                            } else {
+                            if (item.t === selectedTool && selectedTool !== 0) grid[z][x].r = (grid[z][x].r + 1) % 4; 
+                            else {
                                 let defaultV = (selectedTool === 6) ? 9.0 : ((selectedTool === 4) ? 4.0 : ((selectedTool === 5) ? 5.0 : 3.0));
                                 grid[z][x] = { t: selectedTool, r: 0, v: defaultV };
                             }
@@ -1677,9 +1624,7 @@
             let h = container.clientHeight || window.innerHeight;
             if(w===0 || h===0) return;
             const aspect = w/h;
-            
             viewSize = Math.max(COLS, ROWS) * 0.7 + 2; 
-            
             camera.left = -viewSize * aspect; camera.right = viewSize * aspect;
             camera.top = viewSize; camera.bottom = -viewSize;
             camera.updateProjectionMatrix(); renderer.setSize(w, h);
