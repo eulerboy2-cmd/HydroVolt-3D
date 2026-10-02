@@ -655,7 +655,6 @@
                 }
             }
 
-            // ★ 모든 물의 속력이 같은지(단일 회로) 체크 ★
             let maxCurrent = 0;
             let minFlowingCurrent = Infinity;
             isCircuitFlowing = false;
@@ -684,7 +683,6 @@
             lastMaxCurrent = maxCurrent; 
             isCircuitFlowing = maxCurrent > 0.01;
             
-            // 전류가 흐르는 모든 구역의 속도가 거의 동일하면(=차이가 0.05 이내면) uniform 모드 발동
             isUniformCurrent = isCircuitFlowing && ((maxCurrent - minFlowingCurrent) < 0.05);
 
             isShortCircuit = batteryFound && !hasResistorOrBulb && (maxCurrent > 50.0) && isCircuitFlowing;
@@ -916,11 +914,10 @@
             return sprite;
         }
 
-        // ★ 유속이 균일할 땐 기본 파란색, 유속 차이가 생길 때만 색상 매핑 ★
         function getWaterColor(iVal) {
             if (!isDataOverlayOn) return 0x0ea5e9; 
             if (lastMaxCurrent === 0 || iVal < 1e-4) return 0x0ea5e9; 
-            if (isUniformCurrent) return 0x0ea5e9; // 유속이 모두 같으면 파란색 유지!
+            if (isUniformCurrent) return 0x0ea5e9; 
 
             const ratio = Math.min(1.0, iVal / lastMaxCurrent);
             const hue = (1 - ratio) * 0.66; 
@@ -954,7 +951,7 @@
                 tCtx.fillText(isShortCircuit ? `OVERHEAT (SHORT CIRCUIT)` : `${i18n[lang].floorI}: ${lastMaxCurrent.toFixed(2)} A`, 256, 64);
                 
                 const tTex = new THREE.CanvasTexture(tCanvas);
-                const tGeo = new THREE.PlaneGeometry(COLS, 1.2).rotateX(-Math.PI/2);
+                const tGeo = new THREE.PlaneGeometry(4.8, 1.2).rotateX(-Math.PI/2);
                 const tMat = new THREE.MeshBasicMaterial({ map: tTex, transparent: true, depthWrite: false });
                 tMat.isFloorText = true; 
                 const tMesh = new THREE.Mesh(tGeo, tMat);
@@ -1127,7 +1124,7 @@
                         continue; 
                     }
 
-                    if (cell.t === 4 || cell.t === 5) {
+                    if (cell.t === 5) {
                         const isHorizontal = (cell.r % 2 === 0);
                         let v1 = isHorizontal ? getBoundaryHeight(z, x, z, x-1) : getBoundaryHeight(z, x, z-1, x);
                         let v2 = isHorizontal ? getBoundaryHeight(z, x, z, x+1) : getBoundaryHeight(z, x, z+1, x); 
@@ -1203,40 +1200,23 @@
                             wheelY = highH + 0.2;
                         }
 
-                        if (cell.t === 4) { // 저항 배플
-                            const baffleMat = new THREE.MeshStandardMaterial({ color: isShortCircuit ? 0xef4444 : 0xea580c, roughness: 0.4, metalness: 0.2 });
-                            for(let i=1; i<=4; i++) {
-                                const flowPos = i / 5; const side = (i % 2 === 0) ? 1 : -1; const crossOffset = side * 0.06; 
-                                let ox = isHorizontal ? x - 0.5 + flowPos : x + crossOffset;
-                                let oz = isHorizontal ? z + crossOffset : z - 0.5 + flowPos;
-                                let oy = h1 * (1 - flowPos) + h2 * flowPos;
-                                const bGeo = new THREE.BoxGeometry(isHorizontal ? 0.08 : 0.28, 0.12, isHorizontal ? 0.28 : 0.08).translate(0, 0.06, 0);
-                                const bMesh = new THREE.Mesh(bGeo, baffleMat);
-                                bMesh.position.set(ox, oy, oz); bMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(bGeo), edgeMat));
-                                terrainGroup.add(bMesh);
-                            }
-                        }
-                        
-                        let bGroup = null, wheelGroup = null, bMat = null, pLight = null;
-                        if (cell.t === 5) {
-                            bGroup = new THREE.Group(); bGroup.position.set(wheelX, wheelY, wheelZ); terrainGroup.add(bGroup);
-                            wheelGroup = new THREE.Group();
-                            const axisMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8), axisMat);
-                            wheelGroup.add(axisMesh);
+                        let bGroup = new THREE.Group(); bGroup.position.set(wheelX, wheelY, wheelZ); terrainGroup.add(bGroup);
+                        let wheelGroup = new THREE.Group();
+                        const axisMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8), axisMat);
+                        wheelGroup.add(axisMesh);
 
-                            for(let i=0; i<4; i++) {
-                                const paddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.38), paddleMat);
-                                paddle.rotation.y = (Math.PI / 4) * i;
-                                wheelGroup.add(paddle);
-                            }
-                            if (isHorizontal) wheelGroup.rotation.x = Math.PI / 2; else wheelGroup.rotation.z = Math.PI / 2; 
-                            bGroup.add(wheelGroup);
-
-                            bMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 });
-                            const bSphere = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), bMat);
-                            bSphere.position.y = 0.35; bGroup.add(bSphere);
-                            pLight = new THREE.PointLight(0xffff00, 0, 4); pLight.position.y = 0.35; bGroup.add(pLight);
+                        for(let i=0; i<4; i++) {
+                            const paddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.38), paddleMat);
+                            paddle.rotation.y = (Math.PI / 4) * i;
+                            wheelGroup.add(paddle);
                         }
+                        if (isHorizontal) wheelGroup.rotation.x = Math.PI / 2; else wheelGroup.rotation.z = Math.PI / 2; 
+                        bGroup.add(wheelGroup);
+
+                        let bMat = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00 });
+                        const bSphere = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), bMat);
+                        bSphere.position.y = 0.35; bGroup.add(bSphere);
+                        let pLight = new THREE.PointLight(0xffff00, 0, 4); pLight.position.y = 0.35; bGroup.add(pLight);
 
                         let targetI = 0;
                         if (isHorizontal) {
@@ -1259,19 +1239,123 @@
                             else { tex1.offset.y += currentI * delta * 0.5; tex2.offset.y += currentI * delta * 0.5; }
                             if(dropTex) dropTex.offset.y += absI * delta * 2.5;
 
-                            if (cell.t === 5) {
-                                const sign = isHorizontal ? 1 : -1; 
-                                wheelGroup.rotateY(sign * currentI * delta * 6.66); 
-                                
-                                if (absI < 1e-4) { bMat.color.setHex(0x475569); bMat.emissive.setHex(0x000000); pLight.intensity = 0; }
-                                else {
-                                    bMat.color.setHex(0xffff00); bMat.emissive.setHex(0xffff00);
-                                    bMat.emissiveIntensity = Math.min(40, absI * 2.5); pLight.intensity = Math.min(80, absI * 4.0);
-                                }
+                            const sign = isHorizontal ? 1 : -1; 
+                            wheelGroup.rotateY(sign * currentI * delta * 6.66); 
+                            
+                            if (absI < 1e-4) { bMat.color.setHex(0x475569); bMat.emissive.setHex(0x000000); pLight.intensity = 0; }
+                            else {
+                                bMat.color.setHex(0xffff00); bMat.emissive.setHex(0xffff00);
+                                bMat.emissiveIntensity = Math.min(40, absI * 2.5); pLight.intensity = Math.min(80, absI * 4.0);
                             }
                         });
 
                         continue; 
+                    }
+
+                    if (cell.t === 4) { // 저항
+                        const isHorizontal = (cell.r % 2 === 0);
+                        let v1 = isHorizontal ? getBoundaryHeight(z, x, z, x-1) : getBoundaryHeight(z, x, z-1, x);
+                        let v2 = isHorizontal ? getBoundaryHeight(z, x, z, x+1) : getBoundaryHeight(z, x, z+1, x); 
+                        let h1 = toH(v1); let h2 = toH(v2);
+
+                        const geo = new THREE.BoxGeometry(1, 1, 1);
+                        const pos = geo.attributes.position;
+                        for(let i=0; i<pos.count; i++){
+                            let vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
+                            if (vy < 0) { 
+                                pos.setY(i, 0); 
+                            } else {
+                                if (isHorizontal) {
+                                    pos.setY(i, vx < 0 ? h1 : h2);
+                                } else {
+                                    pos.setY(i, vz < 0 ? h1 : h2);
+                                }
+                            }
+                        }
+                        geo.computeVertexNormals();
+                        const mesh = new THREE.Mesh(geo, activeMat);
+                        mesh.position.set(x, 0, z);
+                        mesh.castShadow = true; mesh.receiveShadow = true;
+                        mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
+                        terrainGroup.add(mesh);
+
+                        const waterW = isHorizontal ? 1.0 : 0.4;
+                        const waterD = isHorizontal ? 0.4 : 1.0;
+                        const tex = (isHorizontal ? globalTexX : globalTexZ).clone();
+                        const wGeo = new THREE.PlaneGeometry(waterW, waterD, Math.round(waterW*5), Math.round(waterD*5));
+                        wGeo.rotateX(-Math.PI/2);
+                        const wPos = wGeo.attributes.position;
+                        for(let i=0; i<wPos.count; i++) {
+                            let vx = wPos.getX(i), vz = wPos.getZ(i);
+                            let vy = 0;
+                            if (isHorizontal) {
+                                let t = vx + 0.5; 
+                                vy = h1 * (1 - t) + h2 * t;
+                            } else {
+                                let t = vz + 0.5; 
+                                vy = h1 * (1 - t) + h2 * t;
+                            }
+                            wPos.setY(i, vy + 0.015);
+                        }
+                        wGeo.computeVertexNormals();
+                        
+                        const baseMat = new THREE.MeshBasicMaterial({ color: getWaterColor(0), transparent:true, opacity:0.85 });
+                        const waterBase = new THREE.Mesh(wGeo, baseMat);
+                        waterBase.position.set(x, 0, z);
+                        waterGroup.add(waterBase);
+
+                        const rippleMat = new THREE.MeshBasicMaterial({ map: tex, transparent:true, opacity:0.85, depthWrite:false });
+                        const waterRipple = new THREE.Mesh(wGeo, rippleMat);
+                        waterRipple.position.set(x, 0.001, z);
+                        waterGroup.add(waterRipple);
+
+                        const baffleCount = 4; 
+                        const baffleMat = new THREE.MeshStandardMaterial({ color: isShortCircuit ? 0xef4444 : 0xea580c, roughness: 0.4, metalness: 0.2 });
+                        for(let i=1; i<=baffleCount; i++) {
+                            const flowPos = i / (baffleCount + 1); 
+                            const side = (i % 2 === 0) ? 1 : -1; 
+                            const crossOffset = side * 0.06; 
+                            
+                            let ox, oz, oy, bWidth, bDepth;
+                            if (isHorizontal) {
+                                ox = x - 0.5 + flowPos;
+                                oz = z + crossOffset;
+                                oy = h1 * (1 - flowPos) + h2 * flowPos;
+                                bWidth = 0.08; bDepth = 0.28; 
+                            } else {
+                                ox = x + crossOffset;
+                                oz = z - 0.5 + flowPos;
+                                oy = h1 * (1 - flowPos) + h2 * flowPos;
+                                bWidth = 0.28; bDepth = 0.08;
+                            }
+                            
+                            const bGeo = new THREE.BoxGeometry(bWidth, 0.12, bDepth).translate(0, 0.06, 0);
+                            const bMesh = new THREE.Mesh(bGeo, baffleMat);
+                            bMesh.position.set(ox, oy, oz);
+                            bMesh.castShadow = true; bMesh.receiveShadow = true;
+                            bMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(bGeo), edgeMat));
+                            terrainGroup.add(bMesh);
+                        }
+
+                        let targetI = 0;
+                        if (isHorizontal) {
+                            if (isConnected(z, x, z, x+1)) targetI = getCurrent(z, x, z, x+1);
+                            else if (isConnected(z, x, z, x-1)) targetI = -getCurrent(z, x, z, x-1);
+                        } else {
+                            if (isConnected(z, x, z+1, x)) targetI = getCurrent(z, x, z+1, x);
+                            else if (isConnected(z, x, z-1, x)) targetI = -getCurrent(z, x, z-1, x);
+                        }
+
+                        animatables.push(delta => {
+                            const absI = Math.abs(targetI);
+                            const wColor = isShortCircuit ? 0xef4444 : getWaterColor(absI);
+                            baseMat.color.setHex(wColor);
+
+                            if (isHorizontal) tex.offset.x -= targetI * delta * 0.5;
+                            else tex.offset.y += targetI * delta * 0.5;
+                        });
+
+                        continue;
                     }
 
                     const boxGeo = new THREE.BoxGeometry(1, h, 1).translate(0, h/2, 0);
